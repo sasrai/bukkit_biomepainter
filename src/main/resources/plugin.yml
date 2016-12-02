@@ -1,0 +1,23 @@
+name: "Biome painter"
+version: "${project.version}-${BUILD_NUMBER}"
+author: sasrai
+main: jp.sasrai.biomepainter.BiomePainter
+
+softdepend: [ Permissions, PermissionEx ]
+
+commands:
+  bpaint:
+    description: Give biomepainter tool
+    usage: |
+      /<command> give - get  tool item.
+      /<command> set <biome_name> - set biome directly for tool item.
+      /<command> set <biome id> - set biome directly for tool item.
+
+permissions:
+  biomepainter.*:
+    description: Gives access to all biome edit functions
+    children:
+      biomepainter.tool.give: true
+      biomepainter.tool.check: true
+      biomepainter.tool.pickup: true
+      biomepainter.tool.paint: true

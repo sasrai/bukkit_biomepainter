@@ -1,4 +1,4 @@
-name: "Biome painter"
+name: "BiomePainter"
 version: "${project.version}-${BUILD_NUMBER}"
 author: sasrai
 main: jp.sasrai.biomepainter.BiomePainter
@@ -7,7 +7,7 @@ softdepend: [ Permissions, PermissionEx ]
 
 commands:
   bpaint:
-    description: Give biomepainter tool
+    description: BiomePainter tool control
     usage: |
       /<command> give - get  tool item.
       /<command> set <biome_name> - set biome directly for tool item.
@@ -21,3 +21,21 @@ permissions:
       biomepainter.tool.check: true
       biomepainter.tool.pickup: true
       biomepainter.tool.paint: true
+  biomepainter.tool.*:
+    children:
+      biomepainter.tool.give: true
+      biomepainter.tool.check: true
+      biomepainter.tool.pickup: true
+      biomepainter.tool.paint: true
+  biomepainter.tool.give:
+    description: give
+    default: op
+  biomepainter.tool.check:
+    description: check
+    default: true
+  biomepainter.tool.pickup:
+    description: pickup
+    default: true
+  biomepainter.tool.paint:
+    description: paint
+    default: op

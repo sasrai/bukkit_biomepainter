@@ -64,8 +64,6 @@
 						<configuration>
 							<artifactSet>
 								<includes>
-									<include>us.dynmap:dynmap-api:jar:*</include>
-									<include>us.dynmap:DynmapCore:jar:*</include>
 								</includes>
 							</artifactSet>
 						</configuration>
@@ -105,5 +103,5 @@
 			<artifactId>PermissionsEx</artifactId>
 			<version>1.19.1</version>
 		</dependency>
-  </dependencies>
+	</dependencies>
 </project>

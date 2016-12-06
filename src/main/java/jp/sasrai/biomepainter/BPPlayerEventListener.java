@@ -203,9 +203,11 @@ class BPPlayerEventListener implements Listener {
         Block block = null;
 
         for (int i = 0; i <= range; i++) {
-            block = loc.add(dir).getBlock();
-            if (block.getType() != Material.AIR)
+            Block b = loc.add(dir).getBlock();
+            if (b.getType() != Material.AIR) {
+                block = b;
                 break;
+            }
         }
 
         return block;

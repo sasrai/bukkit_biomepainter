@@ -210,35 +210,4 @@ class BPPlayerEventListener implements Listener {
 
         return block;
     }
-    private Block getTargetBlock(Player player) {
-        // 1.7.10はgetTargetBlockが非推奨仕様の物しか使えない癖に1.8以降だとちゃんと推奨品用意されてるから
-        // リフレクションでちゃんと推奨品が使われるように切り替え処理組んだ。なんという無駄。そして結局使わない。
-        Method[] methods = player.getClass().getMethods();
-        Method methodGetTargetBlock = null;
-        Object dummyNull = null;
-        for (Method method : methods) {
-            if (method.getName().equals("getTargetBlock")) {
-                Class<?>[] params = method.getParameterTypes();
-                if (params.length > 0 && params[0] == Set.class) {
-                    methodGetTargetBlock = method;
-                    dummyNull = (Set<Material>) null;
-                    break;
-                } else if (methodGetTargetBlock == null && params.length > 0 && params[0] == HashSet.class) {
-                    methodGetTargetBlock = method;
-                    dummyNull = (HashSet<Byte>) null;
-                }
-            }
-        }
-        if (methodGetTargetBlock == null) { return null; }
-
-        try {
-            return (Block)methodGetTargetBlock.invoke(player, dummyNull, 5);
-        } catch (IllegalArgumentException ex) {
-            return null;
-        } catch (IllegalAccessException ex) {
-            return null;
-        } catch (InvocationTargetException ex) {
-            return null;
-        }
-    }
 }

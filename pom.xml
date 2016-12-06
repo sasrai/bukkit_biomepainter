@@ -63,6 +63,11 @@
 						</goals>
 						<configuration>
 							<artifactSet>
+								<excludes>
+								  <exclude>com.nijikokun.bukkit:Permissions:jar:*</exclude>
+									<exclude>org.bukkit:bukkit:jar:*</exclude>
+									<exclude>ru.tehkode:PermissionsEx:jar:*</exclude>
+								</excludes>
 								<includes>
 								</includes>
 							</artifactSet>

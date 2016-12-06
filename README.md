@@ -15,6 +15,14 @@ Bukkit用バイオームコピペプラグイン
 - プラグインのreload時に読み込んだバイオーム情報が消える
 - コマンド処理が未実装(コマンド自体は存在)
 
+## ダウンロード
+ぎっはぶのリリースからどぞ
+https://github.com/sasrai/bukkit_biomepainter/releases
+
+
+## 動作確認環境
+CraftBukkit version `git-Spigot-1.7.9-R0.2-208-ge0f2e95` (MC: 1.7.10) (Implementing API version 1.7.10-R0.1-SNAPSHOT)
+
 
 ## Build
 `mvn package`

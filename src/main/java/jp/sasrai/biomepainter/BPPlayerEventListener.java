@@ -1,10 +1,8 @@
 package jp.sasrai.biomepainter;
 
+import com.github.keepoff07.ParticleAPI;
 import jp.sasrai.biomepainter.data.BiomeCache;
-import org.bukkit.Chunk;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -14,10 +12,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.util.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.Vector;
 
 /**
  * Created by sasrai on 2016/12/03.
@@ -114,6 +114,8 @@ class BPPlayerEventListener implements Listener {
         // チャンク再読込
         loc.getWorld().refreshChunk(loc.getChunk().getX(), loc.getChunk().getZ());
 
+        showEffect(player, target);
+
         return true;
     }
     private boolean canShowBiomeInfo(Player player, Action action) {
@@ -140,7 +142,7 @@ class BPPlayerEventListener implements Listener {
         long milliSeconds = System.currentTimeMillis();
         // 前回イベントから245ms未満の場合はバイオーム書き換え処理を行わない
         if (milliSeconds - BiomeCache.getInstance().getWheelMoveTime(player) < 245) { return false; }
-        Block target = getTargetBlock(player);
+        Block target = getTargetBlockForumVer(player, 6);
 
         // 現在のバイオームを取得
         if (target == null) { return false; }
@@ -160,6 +162,8 @@ class BPPlayerEventListener implements Listener {
         // バイオームの変更処理
         target.setBiome(nextBiome);
 
+        showEffect(player, target);
+
         // チャンクを更新
         Chunk chunk = target.getChunk();
         target.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
@@ -174,13 +178,41 @@ class BPPlayerEventListener implements Listener {
         return true;
     }
 
+    private void showEffect(Player player, Block target) {
+        Location loc = target.getLocation().add(0.5f, 1f, 0.5f);
+        // 上が空気じゃなかったら横にずらす
+        if (loc.getBlock().getType() != Material.AIR) {
+            org.bukkit.util.Vector v = player.getEyeLocation().getDirection().normalize();
+            org.bukkit.util.Vector v2 = new org.bukkit.util.Vector(-0.7f * v.getX(), -0.7f * v.getY(), -0.7f * v.getZ());
+            loc.add(v2);
+        }
+        if (!ParticleAPI.createEffect(ParticleAPI.EnumParticle.VILLAGER_HAPPY, (float)loc.getX(), (float)loc.getY(), (float)loc.getZ(), 0.15f, 0.6f, 0.15f, 0.3f, 10)) {
+            plugin.getLogger().warning("send effect packet error...");
+        }
+        target.getWorld().playSound(loc, Sound.CLICK, 10f, 10f);
+    }
+
     private boolean getScrollDirection(int newSlot, int prevSlot) {
         int index = newSlot - prevSlot;
         return (index == -1 || index == 8);
     }
+    private Block getTargetBlockForumVer(Player player, int range) {
+        Location loc = player.getEyeLocation();
+        org.bukkit.util.Vector dir = loc.getDirection().normalize();
+
+        Block block = null;
+
+        for (int i = 0; i <= range; i++) {
+            block = loc.add(dir).getBlock();
+            if (block.getType() != Material.AIR)
+                break;
+        }
+
+        return block;
+    }
     private Block getTargetBlock(Player player) {
         // 1.7.10はgetTargetBlockが非推奨仕様の物しか使えない癖に1.8以降だとちゃんと推奨品用意されてるから
-        // リフレクションでちゃんと推奨品が使われるように切り替え処理組んだ。なんという無駄。
+        // リフレクションでちゃんと推奨品が使われるように切り替え処理組んだ。なんという無駄。そして結局使わない。
         Method[] methods = player.getClass().getMethods();
         Method methodGetTargetBlock = null;
         Object dummyNull = null;

@@ -3,6 +3,7 @@ package jp.sasrai.biomepainter;
  * Created by sasrai on 2016/12/2.
  */
 
+import jp.sasrai.biomepainter.data.BiomeCache;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class BiomePainter extends JavaPlugin {
@@ -18,10 +19,14 @@ public class BiomePainter extends JavaPlugin {
 
         // コンフィグからツールを設定
         BPToolConfig.getInstance().setToolItemFromConfiguration(getConfig());
+
+        // 各ユーザのキャッシュデータを読み込む
+        BiomeCache.getInstance().loadFromFile(getDataFolder());
     }
 
     @Override
     public void onDisable() {
+        BiomeCache.getInstance().saveToFile(getDataFolder());
         super.onDisable();
     }
 }

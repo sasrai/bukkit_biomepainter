@@ -33,12 +33,12 @@ class BiomeCacheData {
     long lastWheelMoveTime;
     Biome biome;
 
-    public BiomeCacheData() {
+    BiomeCacheData() {
         this.biome = null;
         disabledBiomeScrollMessage = false;
         lastWheelMoveTime = 0;
     }
-    public BiomeCacheData(ConfigurationSection section) {
+    BiomeCacheData(ConfigurationSection section) {
         try { // バイオーム名の読み込み失敗時はnullにする
             this.biome = Biome.valueOf(section.getString(KeyName.BIOME.getString(), Biome.PLAINS.name()).toUpperCase());
         } catch (Exception e) {
@@ -47,7 +47,7 @@ class BiomeCacheData {
         this.disabledBiomeScrollMessage = section.getBoolean(KeyName.DISABLED_SCROLL_MSG.getString(), false);
         this.lastWheelMoveTime = 0;
     }
-    public Map<String, String> toConfigurationSection() {
+    Map<String, String> toConfigurationSection() {
         Map<String, String> result = new HashMap<>();
         result.put(KeyName.BIOME.getString(), biome.toString());
         result.put(KeyName.DISABLED_SCROLL_MSG.getString(), String.valueOf(disabledBiomeScrollMessage));
@@ -57,18 +57,9 @@ class BiomeCacheData {
 
 public class BiomeCache {
     // 定数
-    String cacheFilename = "usercache.yml";
+    final String cacheFilename = "usercache.yml";
 
-    private static BiomeCache ourInstance = new BiomeCache();
-
-    public static BiomeCache getInstance() {
-        return ourInstance;
-    }
-
-    private static HashMap<UUID, BiomeCacheData> biomeCache = new HashMap<>();
-
-    private BiomeCache() {
-    }
+    private static Map<UUID, BiomeCacheData> biomeCache = new HashMap<>();
 
     private BiomeCacheData getData(UUID player) {
         if (biomeCache.containsKey(player)) {

@@ -27,11 +27,11 @@ public class PaintTool {
         this.plugin = plugin;
         this.cache = new BiomeCache();
 
-        setToolItem();
+        setToolItemFromConfiguration();
     }
 
-    private void setToolItem() {
-        String toolName = plugin.getConfig().getString("tool.itemName");
+    public void setToolItemFromConfiguration() {
+        String toolName = plugin.getConfig().getString("tool.itemName", DefaultToolMaterial.name());
         setToolItem(Material.matchMaterial(toolName));
     }
     private void setToolItem(Material item) {

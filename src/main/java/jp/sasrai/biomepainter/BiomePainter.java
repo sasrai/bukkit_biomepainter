@@ -10,6 +10,13 @@ public class BiomePainter extends JavaPlugin {
     PaintTool tool;
 
     void pluginInitialize() {
+        // コンフィグ読み込み設定
+        this.getConfig().options().copyDefaults(true);
+
+        // コンフィグが無かったらデフォルトのファイルを保存してくれる神を呼ぶ
+        this.saveDefaultConfig();
+
+        // ツールを初期化
         tool = new PaintTool(this);
     }
     public PaintTool getTool() {

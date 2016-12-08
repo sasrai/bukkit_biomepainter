@@ -7,6 +7,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 /**
  * Created by sasrai on 2016/12/03.
@@ -62,6 +63,13 @@ class BPPlayerEventListener implements Listener {
         if (tool.canScrollBiome(player)) {
             tool.scrollBiome(player, event.getNewSlot(), event.getPreviousSlot());
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onLoginMessage(PlayerJoinEvent event) {
+        if (tool.isCustomizedTool()) {
+            tool.sendChangeToolMessage(event.getPlayer());
         }
     }
 }

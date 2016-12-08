@@ -20,7 +20,7 @@ public class PaintTool {
     private final BiomePainter plugin;
     private final BiomeCache cache;
 
-    static Material DefaultToolMaterial = Material.ARROW;
+    static final Material DefaultToolMaterial = Material.ARROW;
     static Material toolItem;
 
     public PaintTool(BiomePainter plugin) {
@@ -28,6 +28,12 @@ public class PaintTool {
         this.cache = new BiomeCache();
 
         setToolItemFromConfiguration();
+
+        if (isCustomizedTool()) {
+            for (Player player: plugin.getServer().getOnlinePlayers()) {
+                sendChangeToolMessage(player);
+            }
+        }
     }
 
     public void setToolItemFromConfiguration() {
@@ -108,6 +114,7 @@ public class PaintTool {
         target.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
     }
 
+
     /***********************************************************************
      * ここからパブリックメソッド
      ***********************************************************************/
@@ -118,6 +125,12 @@ public class PaintTool {
         cache.saveToFile(plugin.getDataFolder());
     }
 
+    public boolean isCustomizedTool() {
+        return getToolItem() != DefaultToolMaterial;
+    }
+    public void sendChangeToolMessage(Player player) {
+        player.sendMessage("[BiomePainter] Tool has been changed for " + getToolItem().name());
+    }
 
     public boolean canPickupBlock(Player player, Action action) {
         return action == Action.LEFT_CLICK_BLOCK

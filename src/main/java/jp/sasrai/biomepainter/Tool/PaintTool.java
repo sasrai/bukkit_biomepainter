@@ -1,7 +1,6 @@
 package jp.sasrai.biomepainter.Tool;
 
 import com.github.keepoff07.ParticleAPI;
-import jp.sasrai.biomepainter.BPToolConfig;
 import jp.sasrai.biomepainter.BiomePainter;
 import jp.sasrai.biomepainter.data.BiomeCache;
 import org.bukkit.*;
@@ -21,9 +20,25 @@ public class PaintTool {
     private final BiomePainter plugin;
     private final BiomeCache cache;
 
+    static Material DefaultToolMaterial = Material.ARROW;
+    static Material toolItem;
+
     public PaintTool(BiomePainter plugin) {
         this.plugin = plugin;
         this.cache = new BiomeCache();
+
+        setToolItem();
+    }
+
+    private void setToolItem() {
+        String toolName = plugin.getConfig().getString("tool.itemName");
+        setToolItem(Material.matchMaterial(toolName));
+    }
+    private void setToolItem(Material item) {
+        toolItem = item;
+    }
+    private Material getToolItem() {
+        return (toolItem == null) ? DefaultToolMaterial : toolItem;
     }
 
     private boolean shouldAllowedProcessing(Player player, String permission) {
@@ -35,7 +50,7 @@ public class PaintTool {
     }
     private boolean isUsingPlugin(Player player) {
         return player.getGameMode() == GameMode.CREATIVE
-                && player.getItemInHand().getType() == BPToolConfig.getInstance().getToolItem();
+                && player.getItemInHand().getType() == getToolItem();
     }
 
     private void showTargetEffect(Player player, Block target, ParticleAPI.EnumParticle particle) {

@@ -29,9 +29,6 @@ public class BiomePainter extends JavaPlugin {
         // プレイヤーイベントを登録
         new BPPlayerEventListener(this);
 
-        // コンフィグからツールを設定
-        BPToolConfig.getInstance().setToolItemFromConfiguration(getConfig());
-
         // 各ユーザのキャッシュデータを読み込む
         tool.recoveryCacheData();
     }

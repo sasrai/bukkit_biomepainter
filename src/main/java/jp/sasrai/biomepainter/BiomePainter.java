@@ -3,7 +3,9 @@ package jp.sasrai.biomepainter;
  * Created by sasrai on 2016/12/2.
  */
 
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import jp.sasrai.biomepainter.Tool.PaintTool;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class BiomePainter extends JavaPlugin {
@@ -21,6 +23,17 @@ public class BiomePainter extends JavaPlugin {
     }
     public PaintTool getTool() {
         return tool;
+    }
+
+    public WorldGuardPlugin getWorldGuard() {
+        Plugin plugin = getServer().getPluginManager().getPlugin("WorldGuard");
+
+        // WorldGuard may not be loaded
+        if (plugin == null || !(plugin instanceof WorldGuardPlugin)) {
+            return null; // Maybe you want throw an exception instead
+        }
+
+        return (WorldGuardPlugin) plugin;
     }
 
     @Override

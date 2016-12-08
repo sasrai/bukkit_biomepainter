@@ -50,7 +50,7 @@ public class PaintTool {
     private boolean shouldAllowedProcessing(Player player, String permission) {
         if (player.hasPermission(permission)) { return true; }
         else {
-            player.sendMessage("That operation is not allowed by permission");
+            player.sendMessage("[BiomePainter] That operation is not allowed by permission.");
             return false;
         }
     }
@@ -78,22 +78,6 @@ public class PaintTool {
     private boolean getScrollDirection(int newSlot, int prevSlot) {
         int index = newSlot - prevSlot;
         return (index == -1 || index == 8);
-    }
-    private Block getTargetBlockForumVer(Player player, int range) {
-        Location loc = player.getEyeLocation();
-        org.bukkit.util.Vector dir = loc.getDirection().normalize();
-
-        Block block = null;
-
-        for (int i = 0; i <= range; i++) {
-            Block b = loc.add(dir).getBlock();
-            if (b.getType() != Material.AIR) {
-                block = b;
-                break;
-            }
-        }
-
-        return block;
     }
     private Biome getNextBiome(Biome currentBiome, boolean scrollUp) {
         Biome[] allBiomes = Biome.values();
@@ -188,13 +172,12 @@ public class PaintTool {
                 && isUsingPlugin(player)
                 && shouldAllowedProcessing(player, "biomepainter.tool.paint");
     }
-    public boolean scrollBiome(Player player, int newSlot, int prevSlot) {
+    public boolean scrollBiome(Player player, Block target, int newSlot, int prevSlot) {
         boolean scrollUp = getScrollDirection(newSlot, prevSlot);
 
         long milliSeconds = System.currentTimeMillis();
         // 前回イベントから245ms未満の場合はバイオーム書き換え処理を行わない
         if (milliSeconds - cache.getWheelMoveTime(player) < 245) { return false; }
-        Block target = getTargetBlockForumVer(player, 6);
 
         // 対象座標のブロックが取得できなかったら空中と判断して中断
         if (target == null) { return false; }

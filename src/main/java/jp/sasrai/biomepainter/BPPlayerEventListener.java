@@ -2,6 +2,7 @@ package jp.sasrai.biomepainter;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import jp.sasrai.biomepainter.Tool.PaintTool;
+import jp.sasrai.biomepainter.Tool.RegionHolder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -13,6 +14,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 /**
  * Created by sasrai on 2016/12/03.
  */
@@ -20,6 +25,8 @@ class BPPlayerEventListener implements Listener {
     private final BiomePainter plugin;
     private final PaintTool tool;
     private final WorldGuardPlugin worldGuard;
+
+    private final Map<UUID, Long> scrollEventDelayMap = new HashMap<>();
 
     BPPlayerEventListener(BiomePainter plugin) {
         this.plugin = plugin;
@@ -38,9 +45,15 @@ class BPPlayerEventListener implements Listener {
     private boolean shouldEditingEvent(Player player, Block target) {
         if (worldGuard == null) { return true; } // WorldGuard無しは常に許可
 
-        if (worldGuard.canBuild(player, target)) { return true; }
+        // WorldGuard
+        boolean canBuild = false;
+        try {
+            canBuild = RegionHolder.canBuildAllHeight(worldGuard, player, target.getLocation());
+        } catch (NoClassDefFoundError e) { }
+
+        if (canBuild) { return true; }
         else {
-            player.sendMessage("[BiomePainter] Can't edit Biome.");
+            player.sendMessage("[BiomePainter] Regions protected by WorldGuard can not be edited.");
             return false;
         }
     }
@@ -60,7 +73,10 @@ class BPPlayerEventListener implements Listener {
 
         return block;
     }
-
+    private boolean isScrollDelayTimeout(UUID player) {
+        if (!scrollEventDelayMap.containsKey(player)) { return true; }
+        return System.currentTimeMillis() - scrollEventDelayMap.get(player) >= 245;
+    }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onBiomePickup(PlayerInteractEvent event) {
@@ -96,8 +112,13 @@ class BPPlayerEventListener implements Listener {
         Player player = event.getPlayer();
         Block target = getTargetBlockForumVer(player, 6);
 
-        if (tool.canScrollBiome(player) && shouldEditingEvent(player, target)) {
-            tool.scrollBiome(player, target, event.getNewSlot(), event.getPreviousSlot());
+        if (tool.canScrollBiome(player)) {
+            if (isScrollDelayTimeout(player.getUniqueId())) {
+                scrollEventDelayMap.put(player.getUniqueId(), System.currentTimeMillis());
+                if (shouldEditingEvent(player, target)) {
+                    tool.scrollBiome(player, target, event.getNewSlot(), event.getPreviousSlot());
+                }
+            }
             event.setCancelled(true);
         }
     }

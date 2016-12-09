@@ -30,13 +30,11 @@ class BiomeCacheData {
         }
     }
     boolean disabledBiomeScrollMessage;
-    long lastWheelMoveTime;
     Biome biome;
 
     BiomeCacheData() {
         this.biome = null;
         disabledBiomeScrollMessage = false;
-        lastWheelMoveTime = 0;
     }
     BiomeCacheData(ConfigurationSection section) {
         try { // バイオーム名の読み込み失敗時はnullにする
@@ -45,7 +43,6 @@ class BiomeCacheData {
             this.biome = null;
         }
         this.disabledBiomeScrollMessage = section.getBoolean(KeyName.DISABLED_SCROLL_MSG.getString(), false);
-        this.lastWheelMoveTime = 0;
     }
     Map<String, String> toConfigurationSection() {
         Map<String, String> result = new HashMap<>();
@@ -85,24 +82,6 @@ public class BiomeCache {
     public Biome getBiome(UUID player) {
         if (biomeCache.containsKey(player)) return biomeCache.get(player).biome;
         else return null;
-    }
-
-    public void setWheelMoveTime(Player player, long time) {
-        setWheelMoveTime(player.getUniqueId(), time);
-    }
-    public void setWheelMoveTime(UUID player, long time) {
-        BiomeCacheData data = getData(player);
-
-        data.lastWheelMoveTime = time;
-        biomeCache.put(player, data);
-    }
-
-    public long getWheelMoveTime(Player player) {
-        return getWheelMoveTime(player.getUniqueId());
-    }
-    public long getWheelMoveTime(UUID player) {
-        if (biomeCache.containsKey(player)) return biomeCache.get(player).lastWheelMoveTime;
-        else return 0;
     }
 
     public void setDisabledBiomeScrollMessageFlag(Player player, boolean flag) {

@@ -124,7 +124,7 @@ public class PaintTool {
     public boolean pickupBlockInfo(Player player, Block target) {
         cache.setBiome(player, target.getBiome());
 
-        player.sendMessage("[BiomePaint] picked up " + target.getBiome().toString() + " biome.");
+        player.sendMessage("[BiomePainter] picked up " + target.getBiome().toString() + " biome.");
 
         return true;
     }
@@ -161,7 +161,7 @@ public class PaintTool {
     public void showBiomeInfo(Player player, Block target) {
         Formatter fm = new Formatter();
         Location loc = target.getLocation();
-        fm.format("[BiomePaint] X=%d, Z=%d, Biome=%s", loc.getBlockX(), loc.getBlockZ(), target.getBiome());
+        fm.format("[BiomePainter] X=%d, Z=%d, Biome=%s", loc.getBlockX(), loc.getBlockZ(), target.getBiome());
         player.sendMessage(fm.toString());
 
         // おまけのチャンク再読込
@@ -174,10 +174,6 @@ public class PaintTool {
     }
     public boolean scrollBiome(Player player, Block target, int newSlot, int prevSlot) {
         boolean scrollUp = getScrollDirection(newSlot, prevSlot);
-
-        long milliSeconds = System.currentTimeMillis();
-        // 前回イベントから245ms未満の場合はバイオーム書き換え処理を行わない
-        if (milliSeconds - cache.getWheelMoveTime(player) < 245) { return false; }
 
         // 対象座標のブロックが取得できなかったら空中と判断して中断
         if (target == null) { return false; }
@@ -199,8 +195,6 @@ public class PaintTool {
         if (!cache.getDisabledBiomeScrollMessageFlag(player)) {
             player.sendMessage("[BiomePainter] Biome switch. " + currentBiome.toString() + " => " + nextBiome.toString());
         }
-
-        cache.setWheelMoveTime(player, milliSeconds);
 
         return true;
     }

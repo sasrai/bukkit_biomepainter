@@ -113,7 +113,7 @@ public class PaintTool {
         return getToolItem() != DefaultToolMaterial;
     }
     public void sendChangeToolMessage(Player player) {
-        player.sendMessage("[BiomePainter] Tool has been changed for " + getToolItem().name());
+        player.sendMessage("[BiomePainter] Tool has been changed for " + ChatColor.BOLD + getToolItem().name());
     }
 
     public boolean canPickupBlock(Player player, Action action) {
@@ -124,7 +124,7 @@ public class PaintTool {
     public boolean pickupBlockInfo(Player player, Block target) {
         cache.setBiome(player, target.getBiome());
 
-        player.sendMessage("[BiomePainter] picked up " + target.getBiome().toString() + " biome.");
+        player.sendMessage("[BiomePainter] picked up " + ChatColor.YELLOW + target.getBiome().toString() + ChatColor.RESET + " biome.");
 
         return true;
     }
@@ -139,7 +139,9 @@ public class PaintTool {
         Location loc = target.getLocation();
 
         if (newBiome == null) {
-            player.sendMessage("[BiomePaint] Don't set biome. Please set from LeftClick or `/biome set <biome_name>` command.");
+            player.sendMessage("[BiomePaint] Don't set biome. Please set from "
+                    + ChatColor.UNDERLINE + "LeftClick" + ChatColor.RESET + " or "
+                    + ChatColor.UNDERLINE + "`/biome set <biome_name>`" + ChatColor.RESET + " command.");
             return false;
         }
 
@@ -161,7 +163,7 @@ public class PaintTool {
     public void showBiomeInfo(Player player, Block target) {
         Formatter fm = new Formatter();
         Location loc = target.getLocation();
-        fm.format("[BiomePainter] X=%d, Z=%d, Biome=%s", loc.getBlockX(), loc.getBlockZ(), target.getBiome());
+        fm.format("[BiomePainter] X=%d, Z=%d, Biome=" + ChatColor.YELLOW  + "%s", loc.getBlockX(), loc.getBlockZ(), target.getBiome());
         player.sendMessage(fm.toString());
 
         // おまけのチャンク再読込
@@ -173,7 +175,7 @@ public class PaintTool {
                 && isUsingPlugin(player);
     }
     public void showToolInfo(Player player) {
-        player.sendMessage("[BiomePainter] The biome set in the tool is " + cache.getBiome(player));
+        player.sendMessage("[BiomePainter] The biome set in the tool is " + ChatColor.YELLOW + cache.getBiome(player));
     }
     public boolean canScrollBiome(Player player) {
         return player.isSneaking()
@@ -201,7 +203,7 @@ public class PaintTool {
 
         // メッセージ送信
         if (!cache.getDisabledBiomeScrollMessageFlag(player)) {
-            player.sendMessage("[BiomePainter] Biome switch. " + currentBiome.toString() + " => " + nextBiome.toString());
+            player.sendMessage("[BiomePainter] Biome switch. " + ChatColor.YELLOW + currentBiome.toString() + ChatColor.RESET + " => " + ChatColor.YELLOW + nextBiome.toString());
         }
 
         return true;

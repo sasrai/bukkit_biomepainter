@@ -3,6 +3,7 @@ package jp.sasrai.biomepainter;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import jp.sasrai.biomepainter.Tool.PaintTool;
 import jp.sasrai.biomepainter.Tool.RegionHolder;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -53,7 +54,7 @@ class BPPlayerEventListener implements Listener {
 
         if (canBuild) { return true; }
         else {
-            player.sendMessage("[BiomePainter] Regions protected by WorldGuard can not be edited.");
+            player.sendMessage("[BiomePainter] " + ChatColor.RED + "Regions protected" + ChatColor.RESET + " by WorldGuard can not be edited.");
             return false;
         }
     }

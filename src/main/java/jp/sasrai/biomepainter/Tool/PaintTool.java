@@ -167,6 +167,14 @@ public class PaintTool {
         // おまけのチャンク再読込
         refreshChunk(target);
     }
+    public boolean canShowToolInfo(Player player, Action action) {
+        return action == Action.RIGHT_CLICK_AIR
+                && !player.isSneaking()
+                && isUsingPlugin(player);
+    }
+    public void showToolInfo(Player player) {
+        player.sendMessage("[BiomePainter] The biome set in the tool is " + cache.getBiome(player));
+    }
     public boolean canScrollBiome(Player player) {
         return player.isSneaking()
                 && isUsingPlugin(player)

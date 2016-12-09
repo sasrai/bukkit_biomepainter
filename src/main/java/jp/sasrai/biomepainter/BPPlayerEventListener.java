@@ -107,6 +107,14 @@ class BPPlayerEventListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onShowToolInfo(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+
+        if (tool.canShowToolInfo(player, event.getAction())) {
+            tool.showToolInfo(player);
+        }
+    }
     @EventHandler(priority = EventPriority.LOW)
     public void onScrollBiome(PlayerItemHeldEvent event) {
         Player player = event.getPlayer();

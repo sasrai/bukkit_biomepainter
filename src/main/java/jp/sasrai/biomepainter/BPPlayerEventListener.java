@@ -2,7 +2,7 @@ package jp.sasrai.biomepainter;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import jp.sasrai.biomepainter.Tool.PaintTool;
-import jp.sasrai.biomepainter.Tool.RegionHolder;
+import jp.sasrai.biomepainter.util.RegionHolder;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;

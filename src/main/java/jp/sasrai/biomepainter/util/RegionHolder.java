@@ -1,4 +1,4 @@
-package jp.sasrai.biomepainter.Tool;
+package jp.sasrai.biomepainter.util;
 
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.bukkit.RegionContainer;

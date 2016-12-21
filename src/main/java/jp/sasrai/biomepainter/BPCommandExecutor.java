@@ -1,5 +1,6 @@
 package jp.sasrai.biomepainter;
 
+import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -9,10 +10,10 @@ import org.bukkit.entity.Player;
  * Created by keiso on 2016/12/03.
  */
 public class BPCommandExecutor implements CommandExecutor {
-    private final BiomePainter instance;
+    private final BiomePainter plugin;
 
     public BPCommandExecutor(BiomePainter plugin) {
-        this.instance = plugin;
+        this.plugin = plugin;
     }
 
     @Override
@@ -21,10 +22,56 @@ public class BPCommandExecutor implements CommandExecutor {
         if (!cmd.getName().equalsIgnoreCase("bpaint")) { return false; }
 
         // コンソールからは使わせないよ！
-        if (!(sender instanceof Player)) { sender.sendMessage("サーバーコンソールからは利用できません。"); return false; }
+        if (!(sender instanceof Player)) { sender.sendMessage("Do not use server console."); return true; }
 
         // コマンド処理
-        instance.getLogger().info("exec command");
+        plugin.getLogger().info(cmd.toString());
+        plugin.getLogger().info(cmd.getName());
+        plugin.getLogger().info(label);
+        plugin.getLogger().info("length : " + args.length + ((args.length > 0) ? ", " + args[0] : ""));
+
+        if (args.length == 0) { return onNoArgs((Player) sender); }
+        else if (args[0].equalsIgnoreCase("set") && args.length >= 2) {
+            return onCommandSet((Player) sender, args[1]);
+        }
+        else if (args[0].equalsIgnoreCase("give")) {
+            return onCommandGiveTool((Player) sender);
+        }
+
+        return true;
+    }
+
+    private boolean onNoArgs(Player player) {
+        if (player == null || !(player instanceof Player)) { return false; }
+
+        plugin.getTool().showToolInfo(player);
+
+        return true;
+    }
+
+    private boolean onCommandSet(Player player, String biomeName) {
+        if (player == null || !(player instanceof Player)) { return false; }
+
+        try {
+            int biomeId = Integer.parseInt(biomeName);
+            plugin.getTool().setBiome(player, plugin.getBiomeList().getBiome(biomeId));
+        } catch (NumberFormatException e) {
+            try {
+                plugin.getTool().setBiome(player, plugin.getBiomeList().getBiome(biomeName));
+            } catch (Exception ex) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean onCommandGiveTool(Player player) {
+        if (player == null || !(player instanceof Player)) { return false; }
+
+        if (player.getGameMode() == GameMode.CREATIVE && player.hasPermission("biomepainter.tool.give")) {
+            plugin.getTool().giveToolItem(player);
+        }
 
         return true;
     }

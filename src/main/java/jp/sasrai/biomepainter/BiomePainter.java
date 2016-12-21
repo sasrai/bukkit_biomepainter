@@ -5,11 +5,18 @@ package jp.sasrai.biomepainter;
 
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import jp.sasrai.biomepainter.Tool.PaintTool;
+import jp.sasrai.biomepainter.data.BiomeList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class BiomePainter extends JavaPlugin {
     PaintTool tool;
+    BiomeList biomelist;
+
+    public PaintTool getTool() {
+        return tool;
+    }
+    public BiomeList getBiomeList() { return biomelist; }
 
     void pluginInitialize() {
         // コンフィグ読み込み設定
@@ -20,9 +27,9 @@ public class BiomePainter extends JavaPlugin {
 
         // ツールを初期化
         tool = new PaintTool(this);
-    }
-    public PaintTool getTool() {
-        return tool;
+
+        // バイオームリストを初期化
+        biomelist = new BiomeList();
     }
 
     public WorldGuardPlugin getWorldGuard() {

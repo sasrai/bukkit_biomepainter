@@ -8,6 +8,8 @@ import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
 import java.util.Formatter;
@@ -115,6 +117,19 @@ public class PaintTool {
     public void sendChangeToolMessage(Player player) {
         player.sendMessage("[BiomePainter] Tool has been changed for " + ChatColor.BOLD + getToolItem().name());
     }
+    public void setBiome(Player player, Biome biome) {
+        cache.setBiome(player, biome);
+    }
+
+    public void giveToolItem(Player player) {
+        ItemStack toolItem = new ItemStack(getToolItem());
+        ItemMeta meta = toolItem.getItemMeta();
+        meta.setDisplayName(ChatColor.GOLD + "[BiomeTool]");
+        toolItem.setItemMeta(meta);
+        plugin.getLogger().info("Tool = " + toolItem.toString());
+        player.getInventory().addItem(toolItem);
+        player.sendMessage("[BiomePainter] Get item for paint tool (" + ChatColor.BOLD + getToolItem().name() + ChatColor.RESET + ")");
+    }
 
     public boolean canPickupBlock(Player player, Action action) {
         return action == Action.LEFT_CLICK_BLOCK
@@ -122,7 +137,7 @@ public class PaintTool {
                 && shouldAllowedProcessing(player, "biomepainter.tool.pickup");
     }
     public boolean pickupBlockInfo(Player player, Block target) {
-        cache.setBiome(player, target.getBiome());
+        setBiome(player, target.getBiome());
 
         player.sendMessage("[BiomePainter] picked up " + ChatColor.YELLOW + target.getBiome().toString() + ChatColor.RESET + " biome.");
 

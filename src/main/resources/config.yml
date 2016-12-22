@@ -4,3 +4,9 @@ tool:
   # https://jd.bukkit.org/org/bukkit/Material.html (1.7.10)
   # https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html (1.8以降)
   itemName: ARROW
+
+  # ホイールでのバイオーム切り替えのディレイ時間をミリ秒(1/1000秒)単位で設定します。(最大で1秒)
+  # 1以上の数値が設定されている場合、設定した時間が経過するまで次のバイオームに切り替わらなくなります。
+  # 0以下、もしくはコメントアウト等のデフォルト設定にした場合はディレイ時間がなくなります。
+  # ※ ディレイ時間を設定した場合、高速でホイール操作を行うと稀に逆順でバイオームが変化する事があります。
+  wheelBiomeChangeDelay: 200

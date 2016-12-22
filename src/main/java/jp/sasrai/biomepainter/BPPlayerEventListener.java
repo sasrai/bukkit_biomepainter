@@ -27,6 +27,8 @@ class BPPlayerEventListener implements Listener {
     private final PaintTool tool;
     private final WorldGuardPlugin worldGuard;
 
+    private int wheelDelayTime = 245;
+
     private final Map<UUID, Long> scrollEventDelayMap = new HashMap<>();
 
     BPPlayerEventListener(BiomePainter plugin) {
@@ -34,13 +36,26 @@ class BPPlayerEventListener implements Listener {
         this.tool = plugin.getTool();
         this.worldGuard = plugin.getWorldGuard();
 
-        plugin.getLogger().info("WorldGuard = " + worldGuard);
+        setEventConfigFromFile();
 
         registerEvents();
     }
 
     private void registerEvents() {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+    }
+
+    public void setEventConfigFromFile() {
+        String delayTimeValue = plugin.getConfig().getString("tool.wheelBiomeChangeDelay", "0");
+        try {
+            wheelDelayTime = Integer.valueOf(delayTimeValue);
+        } catch (Exception e) {
+            plugin.getServer().getConsoleSender().sendMessage("[BiomePainter] wheelBiomeChangeDelay : " + ChatColor.YELLOW + "Characters other than numbers are included.");
+            wheelDelayTime = 0;
+        }
+        if (wheelDelayTime > 1000) wheelDelayTime = 1000; // 長過ぎるディレイは設定させないほうがいいでしょ
+        if (wheelDelayTime > 0)
+            plugin.getLogger().info("Wheel scroll delay time = " + wheelDelayTime + "ms");
     }
 
     private boolean shouldEditingEvent(Player player, Block target) {
@@ -75,8 +90,8 @@ class BPPlayerEventListener implements Listener {
         return block;
     }
     private boolean isScrollDelayTimeout(UUID player) {
-        if (!scrollEventDelayMap.containsKey(player)) { return true; }
-        return System.currentTimeMillis() - scrollEventDelayMap.get(player) >= 245;
+        if (wheelDelayTime < 1 || !scrollEventDelayMap.containsKey(player)) { return true; }
+        return System.currentTimeMillis() - scrollEventDelayMap.get(player) >= wheelDelayTime;
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

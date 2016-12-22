@@ -119,6 +119,21 @@ public class BiomeList {
         return true;
     }
 
+    public int biomesCount() { return biomes.length; }
+    public boolean biomeExists(String name) {
+        for (BiomeRelationData relation: biomes) {
+            if (null != relation && (name.equalsIgnoreCase(relation.mcName) || name.equalsIgnoreCase(relation.biome.name()))) return true;
+        }
+        return false;
+    }
+    public boolean biomeExists(int id) {
+        if (biomes[id] != null && biomes[id].id == id) return true;
+
+        for (BiomeRelationData relation: biomes) {
+            if (null != relation && relation.id == id) return true;
+        }
+        return false;
+    }
     public int getBiomeId(Biome biome) {
         for (BiomeRelationData relation: biomes) {
             if (null != relation && relation.biome == biome) return relation.id;
@@ -132,15 +147,14 @@ public class BiomeList {
         return Biome.OCEAN;
     }
     public Biome getBiome(int id) {
-        if (biomes[id] == null || biomes[id].id != id) {
-            for (BiomeRelationData relation: biomes) {
-                if (null != relation && relation.id == id) return relation.biome;
-            }
-            return Biome.OCEAN;
+        if (biomes[id] != null && biomes[id].id == id) return biomes[id].biome;
+
+        for (BiomeRelationData relation: biomes) {
+            if (null != relation && relation.id == id) return relation.biome;
         }
-        return biomes[id].biome;
+        return Biome.OCEAN;
     }
-    public String getBiomeMCNameFromID(int id) {
+    public String getBiomeMCName(int id) {
         return getBiomeMCName(getBiome(id));
     }
     public String getBiomeMCName(Biome biome) {

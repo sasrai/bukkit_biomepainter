@@ -11,9 +11,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Arrays;
 import java.util.Formatter;
-import java.util.List;
 
 /**
  * Created by sasrai on 2016/12/08.
@@ -82,17 +80,22 @@ public class PaintTool {
         return (index == -1 || index == 8);
     }
     private Biome getNextBiome(Biome currentBiome, boolean scrollUp) {
-        Biome[] allBiomes = Biome.values();
-        List<Biome> allBiomesList = Arrays.asList(allBiomes);
+        int currentBiomeId = plugin.getBiomeList().getBiomeId(currentBiome);
+        int biomeId = currentBiomeId;
 
-        int index = allBiomesList.indexOf(currentBiome);
-        if (scrollUp) {
-            if (allBiomesList.size() <= ++index) { index = 0; }
-        } else {
-            if (--index <= 0) { index = allBiomesList.size() - 1; }
+        int append = (scrollUp) ? 1 : -1;
+
+        while (true) {
+            biomeId += append;
+
+            if (biomeId >= plugin.getBiomeList().biomesCount()) biomeId = 0;
+            if (biomeId < 0) biomeId = plugin.getBiomeList().biomesCount() - 1;
+
+            if (plugin.getBiomeList().biomeExists(biomeId)
+                    && !plugin.getBiomeList().getBiome(biomeId).name().equals(currentBiome.name())) break;
         }
 
-        return allBiomesList.get(index);
+        return plugin.getBiomeList().getBiome(biomeId);
     }
 
     private void refreshChunk(Block target) {

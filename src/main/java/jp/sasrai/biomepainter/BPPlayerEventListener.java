@@ -136,7 +136,7 @@ class BPPlayerEventListener implements Listener {
         Player player = event.getPlayer();
         Block target = getTargetBlockForumVer(player, 6);
 
-        if (tool.canScrollBiome(player)) {
+        if (tool.canScrollBiome(player) && event.getPreviousSlot() != event.getNewSlot()) {
             if (isScrollDelayTimeout(player.getUniqueId())) {
                 scrollEventDelayMap.put(player.getUniqueId(), System.currentTimeMillis());
                 if (shouldEditingEvent(player, target)) {

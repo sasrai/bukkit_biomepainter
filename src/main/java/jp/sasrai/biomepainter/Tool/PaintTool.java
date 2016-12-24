@@ -201,6 +201,9 @@ public class PaintTool {
                 && shouldAllowedProcessing(player, "biomepainter.tool.paint");
     }
     public boolean scrollBiome(Player player, Block target, int newSlot, int prevSlot) {
+        // スロット番号が同じ場合はスクロールしていないと判断して正常終了扱いをする。
+        if (newSlot == prevSlot) return true;
+
         boolean scrollUp = getScrollDirection(newSlot, prevSlot);
 
         // 対象座標のブロックが取得できなかったら空中と判断して中断

@@ -142,7 +142,7 @@ public class PaintTool {
     public boolean pickupBlockInfo(Player player, Block target) {
         setBiome(player, target.getBiome());
 
-        player.sendMessage("[BiomePainter] picked up " + ChatColor.YELLOW + target.getBiome().toString() + ChatColor.RESET + " biome.");
+        player.sendMessage("[BiomePainter] picked up " + ChatColor.YELLOW + plugin.getBiomeList().getBiomeMCName(target.getBiome()) + ChatColor.RESET + " biome.");
 
         return true;
     }
@@ -181,7 +181,7 @@ public class PaintTool {
     public void showBiomeInfo(Player player, Block target) {
         Formatter fm = new Formatter();
         Location loc = target.getLocation();
-        fm.format("[BiomePainter] X=%d, Z=%d, Biome=" + ChatColor.YELLOW  + "%s", loc.getBlockX(), loc.getBlockZ(), target.getBiome());
+        fm.format("[BiomePainter] X=%d, Z=%d, Biome=" + ChatColor.YELLOW  + "%s", loc.getBlockX(), loc.getBlockZ(), plugin.getBiomeList().getBiomeMCName(target.getBiome()));
         player.sendMessage(fm.toString());
 
         // おまけのチャンク再読込
@@ -193,7 +193,7 @@ public class PaintTool {
                 && isUsingPlugin(player);
     }
     public void showToolInfo(Player player) {
-        player.sendMessage("[BiomePainter] The biome set in the tool is " + ChatColor.YELLOW + cache.getBiome(player));
+        player.sendMessage("[BiomePainter] The biome set in the tool is " + ChatColor.YELLOW + plugin.getBiomeList().getBiomeMCName(cache.getBiome(player)));
     }
     public boolean canScrollBiome(Player player) {
         return player.isSneaking()
@@ -224,7 +224,7 @@ public class PaintTool {
 
         // メッセージ送信
         if (!cache.getDisabledBiomeScrollMessageFlag(player)) {
-            player.sendMessage("[BiomePainter] Biome switch. " + ChatColor.YELLOW + currentBiome.toString() + ChatColor.RESET + " => " + ChatColor.YELLOW + nextBiome.toString());
+            player.sendMessage("[BiomePainter] Biome switch. " + ChatColor.YELLOW + plugin.getBiomeList().getBiomeMCName(currentBiome) + ChatColor.RESET + " => " + ChatColor.YELLOW + plugin.getBiomeList().getBiomeMCName(nextBiome));
         }
 
         return true;

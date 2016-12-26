@@ -5,7 +5,7 @@
   <artifactId>SBP_BiomePainter</artifactId>
   <name>BiomePainter</name>
 
-  <version>0.0.6-SNAPSHOT</version>
+  <version>0.0.7-SNAPSHOT</version>
 
   <properties>
     <timestamp>${maven.build.timestamp}</timestamp>

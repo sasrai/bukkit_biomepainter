@@ -3,6 +3,7 @@ package jp.sasrai.biomepainter.Tool;
 import com.github.keepoff07.ParticleAPI;
 import jp.sasrai.biomepainter.BiomePainter;
 import jp.sasrai.biomepainter.data.BiomeCache;
+import jp.sasrai.biomepainter.util.PermissionUtility;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -47,13 +48,6 @@ public class PaintTool {
         return (toolItem == null) ? DefaultToolMaterial : toolItem;
     }
 
-    private boolean shouldAllowedProcessing(Player player, String permission) {
-        if (player.hasPermission(permission)) { return true; }
-        else {
-            player.sendMessage("[BiomePainter] That operation is not allowed by permission.");
-            return false;
-        }
-    }
     private boolean isUsingPlugin(Player player) {
         return player.getGameMode() == GameMode.CREATIVE
                 && player.getItemInHand().getType() == getToolItem();
@@ -137,7 +131,7 @@ public class PaintTool {
     public boolean canPickupBlock(Player player, Action action) {
         return action == Action.LEFT_CLICK_BLOCK
                 && isUsingPlugin(player)
-                && shouldAllowedProcessing(player, "biomepainter.tool.pickup");
+                && PermissionUtility.shouldAllowedProcessing(player, "biomepainter.tool.pickup");
     }
     public boolean pickupBlockInfo(Player player, Block target) {
         setBiome(player, target.getBiome());
@@ -150,7 +144,7 @@ public class PaintTool {
         return action == Action.RIGHT_CLICK_BLOCK
                 && !player.isSneaking()
                 && isUsingPlugin(player)
-                && shouldAllowedProcessing(player, "biomepainter.tool.paint");
+                && PermissionUtility.shouldAllowedProcessing(player, "biomepainter.tool.paint");
     }
     public boolean replaceBiome(Player player, Block target) {
         Biome newBiome = cache.getBiome(player);
@@ -176,7 +170,7 @@ public class PaintTool {
         return action == Action.RIGHT_CLICK_BLOCK
                 && player.isSneaking()
                 && isUsingPlugin(player)
-                && shouldAllowedProcessing(player, "biomepainter.tool.check");
+                && PermissionUtility.shouldAllowedProcessing(player, "biomepainter.tool.check");
     }
     public void showBiomeInfo(Player player, Block target) {
         Formatter fm = new Formatter();
@@ -198,7 +192,7 @@ public class PaintTool {
     public boolean canScrollBiome(Player player) {
         return player.isSneaking()
                 && isUsingPlugin(player)
-                && shouldAllowedProcessing(player, "biomepainter.tool.paint");
+                && PermissionUtility.shouldAllowedProcessing(player, "biomepainter.tool.paint");
     }
     public boolean scrollBiome(Player player, Block target, int newSlot, int prevSlot) {
         // スロット番号が同じ場合はスクロールしていないと判断して正常終了扱いをする。

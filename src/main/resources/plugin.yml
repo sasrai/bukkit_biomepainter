@@ -17,19 +17,24 @@ permissions:
   biomepainter.*:
     description: Gives access to all biome edit functions
     children:
-      biomepainter.tool.give: true
+      biomepainter.give: true
+      biomepainter.list: true
       biomepainter.tool.check: true
       biomepainter.tool.pickup: true
       biomepainter.tool.paint: true
   biomepainter.tool.*:
     children:
-      biomepainter.tool.give: true
+      biomepainter.give: true
+      biomepainter.list: true
       biomepainter.tool.check: true
       biomepainter.tool.pickup: true
       biomepainter.tool.paint: true
-  biomepainter.tool.give:
+  biomepainter.give:
     description: give
     default: op
+  biomepainter.list:
+    description: show biome list.
+    default: true
   biomepainter.tool.check:
     description: check
     default: true

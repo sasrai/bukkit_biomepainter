@@ -1,5 +1,6 @@
 package jp.sasrai.biomepainter;
 
+import jp.sasrai.biomepainter.util.PermissionUtility;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.block.Biome;
@@ -68,6 +69,9 @@ public class BPCommandExecutor implements CommandExecutor {
     private boolean onCommandSet(Player player, String biomeName) {
         if (player == null || !(player instanceof Player)) { return false; }
 
+        // パーミッション確認
+        if (!PermissionUtility.shouldAllowedProcessing(player, "biomepainter.tool.pickup")) { return true; }
+
         try {
             int biomeId = Integer.parseInt(biomeName);
             plugin.getTool().setBiome(player, plugin.getBiomeList().getBiome(biomeId));
@@ -92,7 +96,10 @@ public class BPCommandExecutor implements CommandExecutor {
     private boolean onCommandGiveTool(Player player) {
         if (player == null || !(player instanceof Player)) { return false; }
 
-        if (player.getGameMode() == GameMode.CREATIVE && player.hasPermission("biomepainter.tool.give")) {
+        // パーミッション確認
+        if (!PermissionUtility.shouldAllowedProcessing(player, "biomepainter.give")) { return true; }
+
+        if (player.getGameMode() == GameMode.CREATIVE) {
             plugin.getTool().giveToolItem(player);
         }
 
@@ -100,6 +107,10 @@ public class BPCommandExecutor implements CommandExecutor {
     }
 
     private  boolean onCommandShowBiomes(CommandSender sender, int page) {
+
+        // パーミッション確認
+        if (sender instanceof Player && !PermissionUtility.shouldAllowedProcessing((Player)sender, "biomepainter.give")) { return true; }
+
         Integer[] ids = plugin.getBiomeList().getBiomeIDs();
         int pageLines = (sender instanceof Player) ? 9 : 20;
 

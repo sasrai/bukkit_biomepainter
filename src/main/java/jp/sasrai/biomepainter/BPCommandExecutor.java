@@ -23,23 +23,25 @@ public class BPCommandExecutor implements CommandExecutor {
         // 関係ないコマンドが来たらばいばい
         if (!cmd.getName().equalsIgnoreCase("bpaint")) { return false; }
 
-        // コンソールからは使わせないよ！
-        if (!(sender instanceof Player)) { sender.sendMessage("Do not use server console."); return true; }
-
         // コマンド処理
-        plugin.getLogger().info(cmd.toString());
-        plugin.getLogger().info(cmd.getName());
-        plugin.getLogger().info(label);
-        plugin.getLogger().info("length : " + args.length + ((args.length > 0) ? ", " + args[0] : ""));
-
         if (args.length == 0) { return onNoArgs((Player) sender); }
-        else if (args[0].equalsIgnoreCase("set") && args.length >= 2) {
+        else if (isSendPlayer(sender) && args[0].equalsIgnoreCase("set") && args.length >= 2) {
             return onCommandSet((Player) sender, buildLongArgs(args));
         }
-        else if (args[0].equalsIgnoreCase("give")) {
+        else if (isSendPlayer(sender) && args[0].equalsIgnoreCase("give")) {
             return onCommandGiveTool((Player) sender);
         }
+        else if (args[0].equalsIgnoreCase("list") || args[0].equalsIgnoreCase("biomes")) {
+            int page = 1;
+            try { page = Integer.parseInt(args[1]); } catch (Exception e) {}
+            return onCommandShowBiomes(sender, page);
+        }
 
+        return false;
+    }
+
+    private boolean isSendPlayer(CommandSender sender) {
+        if (!(sender instanceof Player)) { sender.sendMessage("Do not use server console."); return false; }
         return true;
     }
 
@@ -93,6 +95,40 @@ public class BPCommandExecutor implements CommandExecutor {
         if (player.getGameMode() == GameMode.CREATIVE && player.hasPermission("biomepainter.tool.give")) {
             plugin.getTool().giveToolItem(player);
         }
+
+        return true;
+    }
+
+    private  boolean onCommandShowBiomes(CommandSender sender, int page) {
+        Integer[] ids = plugin.getBiomeList().getBiomeIDs();
+        int pageLines = (sender instanceof Player) ? 9 : 20;
+
+        // 範囲外ページ数調整
+        if (page < 1) page = 1;
+        else if (page > ids.length / pageLines) page = (int)Math.ceil((double)ids.length / (double)pageLines);
+
+        int offset = (page -1) * pageLines;
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(ChatColor.DARK_PURPLE)
+            .append("---------- Available Biomes (page ")
+            .append(page).append("/").append((int)Math.ceil((double)ids.length / (double)pageLines))
+            .append(" ) --------------------\n")
+            .append(ChatColor.RESET);
+        for (int i = offset; i < ids.length && i < offset + pageLines; i++) {
+            // ID出力
+            sb.append(ChatColor.DARK_AQUA).append("[");
+            if (ids[i] < 10) sb.append("  ");
+            else if (ids[i] < 100) sb.append(" ");
+            sb.append(ids[i]).append("] ").append(ChatColor.RESET);
+
+            // バイオーム名出力
+            sb.append(ChatColor.YELLOW).append(plugin.getBiomeList().getBiome(ids[i]).name()).append(ChatColor.RESET)
+                .append(" / ")
+                .append(ChatColor.YELLOW).append(plugin.getBiomeList().getBiomeMCName(ids[i])).append(ChatColor.RESET)
+                .append("\n");
+        }
+        sender.sendMessage(sb.toString());
 
         return true;
     }

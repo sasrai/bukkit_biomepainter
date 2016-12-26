@@ -7,6 +7,8 @@ import org.bukkit.block.Biome;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by sasrai on 2016/12/12.
@@ -166,8 +168,15 @@ public class BiomeList {
     public Biome[] getBiomes() {
         Biome[] biomeOnlyList = new Biome[biomes.length];
         for (int i = 0; i < biomes.length; i++) {
-            biomeOnlyList[i] = biomes[i].biome;
+            biomeOnlyList[i] = (biomes[i] != null) ? biomes[i].biome : null;
         }
         return biomeOnlyList;
+    }
+    public Integer[] getBiomeIDs() {
+        List<Integer> biomeIdList = new ArrayList<>();
+        for (int i = 0; i < biomes.length; i++) {
+            if (biomes[i] != null) biomeIdList.add(biomes[i].id);
+        }
+        return biomeIdList.toArray(new Integer[0]);
     }
 }

@@ -1,12 +1,19 @@
 package jp.sasrai.biomepainter.data;
 
+import jp.sasrai.biomepainter.BiomePainter;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.block.Biome;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +21,10 @@ import java.util.List;
  * Created by sasrai on 2016/12/12.
  */
 public class BiomeList {
+    static final String DEFAULT_BIOMES_FILE = "biomes.yml";
+
+    final BiomePainter plugin;
+
     final String NMSPackage = "net.minecraft.server.";
     final String OBCPackage = "org.bukkit.craftbukkit.";
 
@@ -24,15 +35,23 @@ public class BiomeList {
     private Class<?> biomebase;
     private Class<?> craftblock;
 
-    public BiomeList() {
+    public BiomeList(BiomePainter plugin) throws NoSuchFileException {
+        this.plugin = plugin;
         String mcversion = getVersionString();
-        nmsPackage = NMSPackage + mcversion + ".";
-        obcPackage = OBCPackage + mcversion + ".";
+        if (null == mcversion || plugin.getConfig().getBoolean("biomes.useCustomFile", false)) {
+            nmsPackage = null;
+            obcPackage = null;
+            generateBiomeListFromYaml();
+        } else {
+            nmsPackage = NMSPackage + mcversion + ".";
+            obcPackage = OBCPackage + mcversion + ".";
 
-        biomebase = getNMSBiomeBase();
-        craftblock = getOBCCraftBlock();
+            biomebase = getNMSBiomeBase();
+            craftblock = getOBCCraftBlock();
 
-        generateBiomeList();
+            if (biomebase == null || craftblock == null) generateBiomeListFromYaml();
+            else generateBiomeList();
+        }
     }
 
     private String getVersionString() {
@@ -51,7 +70,7 @@ public class BiomeList {
         try {
             String biomebasePackage = nmsPackage + "BiomeBase";
             return Class.forName(biomebasePackage);
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -59,7 +78,7 @@ public class BiomeList {
         try {
             String craftblockPackage = obcPackage + "block.CraftBlock";
             return Class.forName(craftblockPackage);
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -85,7 +104,10 @@ public class BiomeList {
     private boolean generateBiomeList() {
         if (null == biomebase || null == craftblock) return false;
 
+        plugin.getLogger().info("Load biomes from " + biomebase.getCanonicalName());
+
         try {
+            // TODO: MC1.9以降はBiomeBase.REGISTRY_IDで取得する
             Method getBiomes = biomebase.getMethod("getBiomes");
             Method biomeBaseToBiome = craftblock.getMethod("biomeBaseToBiome", biomebase);
             Object[] biomes = (Object[]) getBiomes.invoke(null);
@@ -118,6 +140,58 @@ public class BiomeList {
             Bukkit.getLogger().info(e.toString());
             return false;
         }
+        return true;
+    }
+    private boolean generateBiomeListFromYaml() throws NoSuchFileException {
+        File biomesFile = new File(plugin.getDataFolder(), plugin.getConfig().getString("biomes.biomesFile", DEFAULT_BIOMES_FILE));
+        if (!biomesFile.exists()) {
+            if (biomesFile.getName().equals(DEFAULT_BIOMES_FILE)) copyDefaultBiomesYamlFile();
+            else {
+                plugin.getLogger().warning(biomesFile.getName() + " : biomesFile not found.");
+                biomes = new BiomeRelationData[0];
+                throw new NoSuchFileException(biomesFile.getAbsolutePath());
+            }
+        }
+        plugin.getLogger().info("Load biomes from " + biomesFile.getAbsolutePath());
+
+        final FileConfiguration biomesConfig = YamlConfiguration.loadConfiguration(biomesFile);
+
+        if (!biomesConfig.contains("biomes")) {
+            throw new InternalError("`biomes` does not exist in the configuration file.");
+        }
+
+        final ConfigurationSection biomesList = biomesConfig.getConfigurationSection("biomes");
+        for (String idStr : biomesList.getKeys(false)) {
+            ConfigurationSection biomeRecord = biomesList.getConfigurationSection(idStr);
+
+            final int id;
+            try { id = Integer.parseInt(idStr); } catch (Exception e) { continue; }
+
+            BiomeRelationData biomeData = new BiomeRelationData();
+
+            biomeData.id = id;
+            biomeData.mcName = biomeRecord.getString("mcname");
+            biomeData.biome = Biome.valueOf(biomeRecord.getString("bkname"));
+            plugin.getLogger().info(id + ":" + biomeData.mcName);
+
+            this.biomes[id] = biomeData;
+        }
+        return true;
+    }
+    private boolean copyDefaultBiomesYamlFile() {
+        String[] versions = plugin.getMCVersion().split("\\.");
+        String targetFilename = ".biomes." + versions[0] + "." + versions[1] + ".yml";
+        // copy default file
+        plugin.saveResource(targetFilename, false);
+
+        // rename
+        String biomesFile = plugin.getConfig().getString("biomes.biomesFile", DEFAULT_BIOMES_FILE);
+        File loadedFile = new File(plugin.getDataFolder(), targetFilename);
+        File targetFile = new File(plugin.getDataFolder(), biomesFile);
+        loadedFile.renameTo(targetFile);
+
+        plugin.getLogger().info("Generate default biome definition file. => " + targetFile.getAbsolutePath());
+
         return true;
     }
 

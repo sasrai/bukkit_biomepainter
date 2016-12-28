@@ -26,10 +26,10 @@ public class BPCommandExecutor implements CommandExecutor {
 
         // コマンド処理
         if (args.length == 0) { return onNoArgs((Player) sender); }
-        else if (isSendPlayer(sender) && args[0].equalsIgnoreCase("set") && args.length >= 2) {
+        else if (args[0].equalsIgnoreCase("set") && isSendPlayer(sender) && args.length >= 2) {
             return onCommandSet((Player) sender, buildLongArgs(args));
         }
-        else if (isSendPlayer(sender) && args[0].equalsIgnoreCase("give")) {
+        else if (args[0].equalsIgnoreCase("give") && isSendPlayer(sender)) {
             return onCommandGiveTool((Player) sender);
         }
         else if (args[0].equalsIgnoreCase("list") || args[0].equalsIgnoreCase("biomes")) {
@@ -42,7 +42,7 @@ public class BPCommandExecutor implements CommandExecutor {
     }
 
     private boolean isSendPlayer(CommandSender sender) {
-        if (!(sender instanceof Player)) { sender.sendMessage("Do not use server console."); return false; }
+        if (!(sender instanceof Player)) { sender.sendMessage("[BiomePainter] " + ChatColor.DARK_RED + "Do not use server console."); return false; }
         return true;
     }
 

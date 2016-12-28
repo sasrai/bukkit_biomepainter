@@ -9,9 +9,11 @@ commands:
   bpaint:
     description: BiomePainter tool control
     usage: |
-      /<command> give - get  tool item.
-      /<command> set <biome_name> - set biome directly for tool item.
-      /<command> set <biome id> - set biome directly for tool item.
+      /<command> list - show biome list.
+      /<command> biomes - show biome list.
+      /<command> give - get tool item. (Client only)
+      /<command> set <biome_name> - set biome directly for tool item. (Client only)
+      /<command> set <biome id> - set biome directly for tool item. (Client only)
 
 permissions:
   biomepainter.*:

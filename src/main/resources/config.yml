@@ -10,3 +10,10 @@ tool:
   # 0以下、もしくはコメントアウト等のデフォルト設定にした場合はディレイ時間がなくなります。
   # ※ ディレイ時間を設定した場合、高速でホイール操作を行うと稀に逆順でバイオームが変化する事があります。
   wheelBiomeChangeDelay: 200
+
+biomes:
+  # useCustomFileをtrueにするとバイオーム情報をファイルから取得します。
+  # Cauldronサーバ等でバイオーム情報を取得できない場合はfalseにしていてもファイルからの取得を行います。
+  useCustomFile: false
+  # バイオーム情報の読み込み元ファイルを指定します。
+  biomesFile: biomes.yml

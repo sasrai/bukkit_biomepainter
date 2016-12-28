@@ -172,7 +172,6 @@ public class BiomeList {
             biomeData.id = id;
             biomeData.mcName = biomeRecord.getString("mcname");
             biomeData.biome = Biome.valueOf(biomeRecord.getString("bkname"));
-            plugin.getLogger().info(id + ":" + biomeData.mcName);
 
             this.biomes[id] = biomeData;
         }
@@ -231,7 +230,12 @@ public class BiomeList {
         return Biome.OCEAN;
     }
     public String getBiomeMCName(int id) {
-        return getBiomeMCName(getBiome(id));
+        if (biomes[id] != null && biomes[id].id == id) return biomes[id].mcName;
+
+        for (BiomeRelationData relation: biomes) {
+            if (null != relation && relation.id == id) return relation.mcName;
+        }
+        return "Ocean";
     }
     public String getBiomeMCName(Biome biome) {
         for (BiomeRelationData relation: biomes) {

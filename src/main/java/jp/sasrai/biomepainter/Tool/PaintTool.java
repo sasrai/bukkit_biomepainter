@@ -1,9 +1,11 @@
 package jp.sasrai.biomepainter.Tool;
 
 import com.github.keepoff07.ParticleAPI;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import jp.sasrai.biomepainter.BiomePainter;
 import jp.sasrai.biomepainter.data.BiomeCache;
 import jp.sasrai.biomepainter.util.PermissionUtility;
+import jp.sasrai.biomepainter.util.RegionHolder;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
@@ -20,13 +22,16 @@ import java.util.Formatter;
 public class PaintTool {
     private final BiomePainter plugin;
     private final BiomeCache cache;
+    private final WorldGuardPlugin worldGuard;
 
-    static final Material DefaultToolMaterial = Material.ARROW;
-    static Material toolItem;
+    private static final Material DefaultToolMaterial = Material.ARROW;
+    private static Material toolItem;
+    private static int controlRange;
 
     public PaintTool(BiomePainter plugin) {
         this.plugin = plugin;
         this.cache = new BiomeCache();
+        this.worldGuard = plugin.getWorldGuard();
 
         setToolItemFromConfiguration();
 
@@ -37,9 +42,12 @@ public class PaintTool {
         }
     }
 
-    public void setToolItemFromConfiguration() {
+    private void setToolItemFromConfiguration() {
         String toolName = plugin.getConfig().getString("tool.itemName", DefaultToolMaterial.name());
         setToolItem(Material.matchMaterial(toolName));
+
+        int range = plugin.getConfig().getInt("tool.range", 5);
+        setControlRange(range);
     }
     private void setToolItem(Material item) {
         toolItem = item;
@@ -47,6 +55,8 @@ public class PaintTool {
     private Material getToolItem() {
         return (toolItem == null) ? DefaultToolMaterial : toolItem;
     }
+    private void setControlRange(int range) { controlRange = range; }
+    private int getControlRange() { return controlRange; }
 
     private boolean isUsingPlugin(Player player) {
         return player.getGameMode() == GameMode.CREATIVE
@@ -67,6 +77,10 @@ public class PaintTool {
             plugin.getLogger().warning("send effect packet error...");
         }
         target.getWorld().playSound(loc, Sound.CLICK, 10f, 10f);
+    }
+
+    private boolean isTargetExists(Player player) {
+        return getTargetBlockForumVer(player) != null;
     }
 
     private boolean getScrollDirection(int newSlot, int prevSlot) {
@@ -90,6 +104,22 @@ public class PaintTool {
         }
 
         return plugin.getBiomeList().getBiome(biomeId);
+    }
+
+    private boolean shouldEditingBiome(Player player, Block target) {
+        if (worldGuard == null || target == null) { return true; } // WorldGuard無しは常に許可
+
+        // WorldGuard
+        boolean canBuild = false;
+        try {
+            canBuild = RegionHolder.canBuildAllHeight(worldGuard, player, target.getLocation());
+        } catch (NoClassDefFoundError e) { }
+
+        if (canBuild) { return true; }
+        else {
+            player.sendMessage("[BiomePainter] " + ChatColor.RED + "Regions protected" + ChatColor.RESET + " by WorldGuard can not be edited.");
+            return false;
+        }
     }
 
     private void refreshChunk(Block target) {
@@ -128,25 +158,49 @@ public class PaintTool {
         player.sendMessage("[BiomePainter] Get item for paint tool (" + ChatColor.BOLD + getToolItem().name() + ChatColor.RESET + ")");
     }
 
-    public boolean canPickupBlock(Player player, Action action) {
-        return action == Action.LEFT_CLICK_BLOCK
+    private Block getTargetBlockForumVer(Player player) {
+        Location loc = player.getEyeLocation();
+        org.bukkit.util.Vector dir = loc.getDirection().normalize();
+
+        Block block = null;
+
+        for (int i = 0; i <= getControlRange(); i++) {
+            Block b = loc.add(dir).getBlock();
+            if (b.getType() != Material.AIR) {
+                block = b;
+                break;
+            }
+        }
+
+        return block;
+    }
+
+    private boolean canPickupBlock(Player player, Action action) {
+        return (action == Action.LEFT_CLICK_BLOCK || (action == Action.LEFT_CLICK_AIR && isTargetExists(player)))
                 && isUsingPlugin(player)
                 && PermissionUtility.shouldAllowedProcessing(player, "biomepainter.tool.pickup");
     }
-    public boolean pickupBlockInfo(Player player, Block target) {
+    public boolean pickupBlockInfo(Player player, Action action, Block target) {
+        if (target == null) target = getTargetBlockForumVer(player);
+        if (!canPickupBlock(player, action)) return false;
+
         setBiome(player, target.getBiome());
 
         player.sendMessage("[BiomePainter] picked up " + ChatColor.YELLOW + plugin.getBiomeList().getBiomeMCName(target.getBiome()) + ChatColor.RESET + " biome.");
 
         return true;
     }
-    public boolean canBiomePainting(Player player, Action action) {
-        return action == Action.RIGHT_CLICK_BLOCK
+
+    private boolean canBiomePainting(Player player, Action action) {
+        return (action == Action.RIGHT_CLICK_BLOCK || (action == Action.RIGHT_CLICK_AIR && isTargetExists(player)))
                 && !player.isSneaking()
                 && isUsingPlugin(player)
                 && PermissionUtility.shouldAllowedProcessing(player, "biomepainter.tool.paint");
     }
-    public boolean replaceBiome(Player player, Block target) {
+    public boolean replaceBiome(Player player, Action action, Block target) {
+        if (target == null) target = getTargetBlockForumVer(player);
+        if (!canBiomePainting(player, action) || !shouldEditingBiome(player, target)) return false;
+
         Biome newBiome = cache.getBiome(player);
         Location loc = target.getLocation();
 
@@ -166,13 +220,16 @@ public class PaintTool {
 
         return true;
     }
-    public boolean canShowBiomeInfo(Player player, Action action) {
-        return action == Action.RIGHT_CLICK_BLOCK
+    private boolean canShowBiomeInfo(Player player, Action action) {
+        return (action == Action.RIGHT_CLICK_BLOCK || (action == Action.RIGHT_CLICK_AIR && isTargetExists(player)))
                 && player.isSneaking()
                 && isUsingPlugin(player)
                 && PermissionUtility.shouldAllowedProcessing(player, "biomepainter.tool.check");
     }
-    public void showBiomeInfo(Player player, Block target) {
+    public boolean showBiomeInfo(Player player, Action action, Block target) {
+        if (target == null) target = getTargetBlockForumVer(player);
+        if (!canShowBiomeInfo(player, action)) return false;
+
         Formatter fm = new Formatter();
         Location loc = target.getLocation();
         fm.format("[BiomePainter] X=%d, Z=%d, Biome=" + ChatColor.YELLOW  + "%s", loc.getBlockX(), loc.getBlockZ(), plugin.getBiomeList().getBiomeMCName(target.getBiome()));
@@ -180,9 +237,11 @@ public class PaintTool {
 
         // おまけのチャンク再読込
         refreshChunk(target);
+
+        return true;
     }
     public boolean canShowToolInfo(Player player, Action action) {
-        return action == Action.RIGHT_CLICK_AIR
+        return (action == Action.RIGHT_CLICK_AIR && !isTargetExists(player))
                 && !player.isSneaking()
                 && isUsingPlugin(player);
     }
@@ -194,14 +253,16 @@ public class PaintTool {
                 && isUsingPlugin(player)
                 && PermissionUtility.shouldAllowedProcessing(player, "biomepainter.tool.paint");
     }
-    public boolean scrollBiome(Player player, Block target, int newSlot, int prevSlot) {
+    public boolean scrollBiome(Player player, int newSlot, int prevSlot) {
+        Block target = getTargetBlockForumVer(player);
+
         // スロット番号が同じ場合はスクロールしていないと判断して正常終了扱いをする。
         if (newSlot == prevSlot) return true;
 
         boolean scrollUp = getScrollDirection(newSlot, prevSlot);
 
         // 対象座標のブロックが取得できなかったら空中と判断して中断
-        if (target == null) { return false; }
+        if (target == null || !shouldEditingBiome(player, target)) { return false; }
 
         // 次のバイオームを取得
         Biome currentBiome = target.getBiome();

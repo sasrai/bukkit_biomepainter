@@ -124,9 +124,10 @@ public class BPCommandExecutor implements CommandExecutor {
         sb.append(ChatColor.DARK_PURPLE)
             .append("---------- Available Biomes (page ")
             .append(page).append("/").append((int)Math.ceil((double)ids.length / (double)pageLines))
-            .append(" ) --------------------\n")
+            .append(" ) --------------------")
             .append(ChatColor.RESET);
         for (int i = offset; i < ids.length && i < offset + pageLines; i++) {
+            sb.append("\n");
             // ID出力
             sb.append(ChatColor.DARK_AQUA).append("[");
             if (ids[i] < 10) sb.append("  ");
@@ -136,8 +137,7 @@ public class BPCommandExecutor implements CommandExecutor {
             // バイオーム名出力
             sb.append(ChatColor.YELLOW).append(plugin.getBiomeList().getBiome(ids[i]).name()).append(ChatColor.RESET)
                 .append(" / ")
-                .append(ChatColor.YELLOW).append(plugin.getBiomeList().getBiomeMCName(ids[i])).append(ChatColor.RESET)
-                .append("\n");
+                .append(ChatColor.YELLOW).append(plugin.getBiomeList().getBiomeMCName(ids[i])).append(ChatColor.RESET);
         }
         sender.sendMessage(sb.toString());
 

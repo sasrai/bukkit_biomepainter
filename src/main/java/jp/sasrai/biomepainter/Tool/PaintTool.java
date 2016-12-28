@@ -74,7 +74,6 @@ public class PaintTool {
         if (!ParticleAPI.createEffect(particle,
                 (float)loc.getX(), (float)loc.getY(), (float)loc.getZ(),
                 0.15f, 0.6f, 0.15f, 0.3f, 10)) {
-            plugin.getLogger().warning("send effect packet error...");
         }
         target.getWorld().playSound(loc, Sound.CLICK, 10f, 10f);
     }

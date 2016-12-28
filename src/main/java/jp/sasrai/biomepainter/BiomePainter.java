@@ -22,7 +22,7 @@ public class BiomePainter extends JavaPlugin {
     }
     public BiomeList getBiomeList() { return biomelist; }
 
-    void pluginInitialize() {
+    boolean pluginInitialize() {
         // コンフィグ読み込み設定
         this.getConfig().options().copyDefaults(true);
 
@@ -33,7 +33,14 @@ public class BiomePainter extends JavaPlugin {
         tool = new PaintTool(this);
 
         // バイオームリストを初期化
-        biomelist = new BiomeList();
+        try {
+            biomelist = new BiomeList(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 
     public WorldGuardPlugin getWorldGuard() {
@@ -62,7 +69,7 @@ public class BiomePainter extends JavaPlugin {
         super.onEnable();
 
         // 初期化処理
-        pluginInitialize();
+        if (!pluginInitialize()) return;
 
         // コマンド処理を登録
         getCommand("bpaint").setExecutor(new BPCommandExecutor(this));

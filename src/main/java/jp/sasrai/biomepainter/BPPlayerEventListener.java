@@ -59,7 +59,7 @@ class BPPlayerEventListener implements Listener {
     }
 
     private boolean shouldEditingEvent(Player player, Block target) {
-        if (worldGuard == null) { return true; } // WorldGuard無しは常に許可
+        if (worldGuard == null || target == null) { return true; } // WorldGuard無しは常に許可
 
         // WorldGuard
         boolean canBuild = false;
@@ -137,7 +137,7 @@ class BPPlayerEventListener implements Listener {
         Block target = getTargetBlockForumVer(player, 6);
 
         if (tool.canScrollBiome(player) && event.getPreviousSlot() != event.getNewSlot()) {
-            if (isScrollDelayTimeout(player.getUniqueId())) {
+            if (target != null && isScrollDelayTimeout(player.getUniqueId())) {
                 scrollEventDelayMap.put(player.getUniqueId(), System.currentTimeMillis());
                 if (shouldEditingEvent(player, target)) {
                     tool.scrollBiome(player, target, event.getNewSlot(), event.getPreviousSlot());

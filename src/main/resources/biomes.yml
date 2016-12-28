@@ -1,184 +1,184 @@
 biomes:
-  OCEAN:
-    id: 0
+  0:
+    bkname: OCEAN
     mcname: Ocean
-  PLAINS:
-    id: 1
+  1:
+    bkname: PLAINS
     mcname: Plains
-  DESERT:
-    id: 2
+  2:
+    bkname: DESERT
     mcname: Desert
-  EXTREME_HILLS:
-    id: 3
+  3:
+    bkname: EXTREME_HILLS
     mcname: Extreme Hills
-  FOREST:
-    id: 4
+  4:
+    bkname: FOREST
     mcname: Forest
-  TAIGA:
-    id: 5
+  5:
+    bkname: TAIGA
     mcname: Taiga
-  SWAMPLAND:
-    id: 6
+  6:
+    bkname: SWAMPLAND
     mcname: Swampland
-  RIVER:
-    id: 7
+  7:
+    bkname: RIVER
     mcname: River
-  HELL:
-    id: 8
+  8:
+    bkname: HELL
     mcname: Hell
-  SKY:
-    id: 9
+  9:
+    bkname: SKY
     mcname: Sky
-  FROZEN_OCEAN:
-    id: 10
+  10:
+    bkname: FROZEN_OCEAN
     mcname: FrozenOcean
-  FROZEN_RIVER:
-    id: 11
+  11:
+    bkname: FROZEN_RIVER
     mcname: FrozenRiver
-  ICE_PLAINS:
-    id: 12
+  12:
+    bkname: ICE_PLAINS
     mcname: Ice Plains
-  ICE_MOUNTAINS:
-    id: 13
+  13:
+    bkname: ICE_MOUNTAINS
     mcname: Ice Mountains
-  MUSHROOM_ISLAND:
-    id: 14
+  14:
+    bkname: MUSHROOM_ISLAND
     mcname: MushroomIsland
-  MUSHROOM_SHORE:
-    id: 15
+  15:
+    bkname: MUSHROOM_SHORE
     mcname: MushroomIslandShore
-  BEACH:
-    id: 16
+  16:
+    bkname: BEACH
     mcname: Beach
-  DESERT_HILLS:
-    id: 17
+  17:
+    bkname: DESERT_HILLS
     mcname: DesertHills
-  FOREST_HILLS:
-    id: 18
+  18:
+    bkname: FOREST_HILLS
     mcname: ForestHills
-  TAIGA_HILLS:
-    id: 19
+  19:
+    bkname: TAIGA_HILLS
     mcname: TaigaHills
-  SMALL_MOUNTAINS:
-    id: 20
+  20:
+    bkname: SMALL_MOUNTAINS
     mcname: Extreme Hills Edge
-  JUNGLE:
-    id: 21
+  21:
+    bkname: JUNGLE
     mcname: Jungle
-  JUNGLE_HILLS:
-    id: 22
+  22:
+    bkname: JUNGLE_HILLS
     mcname: JungleHills
-  JUNGLE_EDGE:
-    id: 23
+  23:
+    bkname: JUNGLE_EDGE
     mcname: JungleEdge
-  DEEP_OCEAN:
-    id: 24
+  24:
+    bkname: DEEP_OCEAN
     mcname: Deep Ocean
-  STONE_BEACH:
-    id: 25
+  25:
+    bkname: STONE_BEACH
     mcname: Stone Beach
-  COLD_BEACH:
-    id: 26
+  26:
+    bkname: COLD_BEACH
     mcname: Cold Beach
-  BIRCH_FOREST:
-    id: 27
+  27:
+    bkname: BIRCH_FOREST
     mcname: Birch Forest
-  BIRCH_FOREST_HILLS:
-    id: 28
+  28:
+    bkname: BIRCH_FOREST_HILLS
     mcname: Birch Forest Hills
-  ROOFED_FOREST:
-    id: 29
+  29:
+    bkname: ROOFED_FOREST
     mcname: Roofed Forest
-  COLD_TAIGA:
-    id: 30
+  30:
+    bkname: COLD_TAIGA
     mcname: Cold Taiga
-  COLD_TAIGA_HILLS:
-    id: 31
+  31:
+    bkname: COLD_TAIGA_HILLS
     mcname: Cold Taiga Hills
-  MEGA_TAIGA:
-    id: 32
+  32:
+    bkname: MEGA_TAIGA
     mcname: Mega Taiga
-  MEGA_TAIGA_HILLS:
-    id: 33
+  33:
+    bkname: MEGA_TAIGA_HILLS
     mcname: Mega Taiga Hills
-  EXTREME_HILLS_PLUS:
-    id: 34
+  34:
+    bkname: EXTREME_HILLS_PLUS
     mcname: Extreme Hills+
-  SAVANNA:
-    id: 35
+  35:
+    bkname: SAVANNA
     mcname: Savanna
-  SAVANNA_PLATEAU:
-    id: 36
+  36:
+    bkname: SAVANNA_PLATEAU
     mcname: Savanna Plateau
-  MESA:
-    id: 37
+  37:
+    bkname: MESA
     mcname: Mesa
-  MESA_PLATEAU_FOREST:
-    id: 38
+  38:
+    bkname: MESA_PLATEAU_FOREST
     mcname: Mesa Plateau F
-  MESA_PLATEAU:
-    id: 39
+  39:
+    bkname: MESA_PLATEAU
     mcname: Mesa Plateau
-  SUNFLOWER_PLAINS:
-    id: 129
+  129:
+    bkname: SUNFLOWER_PLAINS
     mcname: Sunflower Plains
-  DESERT_MOUNTAINS:
-    id: 130
+  130:
+    bkname: DESERT_MOUNTAINS
     mcname: Desert M
-  EXTREME_HILLS_MOUNTAINS:
-    id: 131
+  131:
+    bkname: EXTREME_HILLS_MOUNTAINS
     mcname: Extreme Hills M
-  FLOWER_FOREST:
-    id: 132
+  132:
+    bkname: FLOWER_FOREST
     mcname: Flower Forest
-  TAIGA_MOUNTAINS:
-    id: 133
+  133:
+    bkname: TAIGA_MOUNTAINS
     mcname: Taiga M
-  SWAMPLAND_MOUNTAINS:
-    id: 134
+  134:
+    bkname: SWAMPLAND_MOUNTAINS
     mcname: Swampland M
-  ICE_PLAINS_SPIKES:
-    id: 140
+  140:
+    bkname: ICE_PLAINS_SPIKES
     mcname: Ice Plains Spikes
-  JUNGLE_MOUNTAINS:
-    id: 149
+  149:
+    bkname: JUNGLE_MOUNTAINS
     mcname: Jungle M
-  JUNGLE_EDGE_MOUNTAINS:
-    id: 151
+  151:
+    bkname: JUNGLE_EDGE_MOUNTAINS
     mcname: JungleEdge M
-  BIRCH_FOREST_MOUNTAINS:
-    id: 155
+  155:
+    bkname: BIRCH_FOREST_MOUNTAINS
     mcname: Birch Forest M
-  BIRCH_FOREST_HILLS_MOUNTAINS:
-    id: 156
+  156:
+    bkname: BIRCH_FOREST_HILLS_MOUNTAINS
     mcname: Birch Forest Hills M
-  ROOFED_FOREST_MOUNTAINS:
-    id: 157
+  157:
+    bkname: ROOFED_FOREST_MOUNTAINS
     mcname: Roofed Forest M
-  COLD_TAIGA_MOUNTAINS:
-    id: 158
+  158:
+    bkname: COLD_TAIGA_MOUNTAINS
     mcname: Cold Taiga M
-  MEGA_SPRUCE_TAIGA:
-    id: 160
+  160:
+    bkname: MEGA_SPRUCE_TAIGA
     mcname: Mega Spruce Taiga
-  MEGA_SPRUCE_TAIGA:
-    id: 161
+  161:
+    bkname: MEGA_SPRUCE_TAIGA
     mcname: Mega Spruce Taiga
-  EXTREME_HILLS_PLUS_MOUNTAINS:
-    id: 162
+  162:
+    bkname: EXTREME_HILLS_PLUS_MOUNTAINS
     mcname: Extreme Hills+ M
-  SAVANNA_MOUNTAINS:
-    id: 163
+  163:
+    bkname: SAVANNA_MOUNTAINS
     mcname: Savanna M
-  SAVANNA_PLATEAU_MOUNTAINS:
-    id: 164
+  164:
+    bkname: SAVANNA_PLATEAU_MOUNTAINS
     mcname: Savanna Plateau M
-  MESA_BRYCE:
-    id: 165
+  165:
+    bkname: MESA_BRYCE
     mcname: Mesa (Bryce)
-  MESA_PLATEAU_FOREST_MOUNTAINS:
-    id: 166
+  166:
+    bkname: MESA_PLATEAU_FOREST_MOUNTAINS
     mcname: Mesa Plateau F M
-  MESA_PLATEAU_MOUNTAINS:
-    id: 167
+  167:
+    bkname: MESA_PLATEAU_MOUNTAINS
     mcname: Mesa Plateau M

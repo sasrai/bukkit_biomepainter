@@ -21,12 +21,12 @@ import java.util.List;
  * Created by sasrai on 2016/12/12.
  */
 public class BiomeList {
-    static final String DEFAULT_BIOMES_FILE = "biomes.yml";
+    private static final String DEFAULT_BIOMES_FILE = "biomes.yml";
 
-    final BiomePainter plugin;
+    private final BiomePainter plugin;
 
-    final String NMSPackage = "net.minecraft.server.";
-    final String OBCPackage = "org.bukkit.craftbukkit.";
+    private final String NMSPackage = "net.minecraft.server.";
+    private final String OBCPackage = "org.bukkit.craftbukkit.";
 
     private BiomeRelationData[] biomes = new BiomeRelationData[256];
     private final String nmsPackage;
@@ -123,20 +123,10 @@ public class BiomeList {
                     biomeData.biome = (Biome) biomeBaseToBiome.invoke(null, biomebase);
                     biomeData.biomebase = biomebase;
 
-
                     this.biomes[i] = biomeData;
                 }
             }
-        } catch (NoSuchMethodException e) {
-            Bukkit.getLogger().info(e.toString());
-            return false;
-        } catch (IllegalAccessException e) {
-            Bukkit.getLogger().info(e.toString());
-            return false;
-        } catch (InvocationTargetException e) {
-            Bukkit.getLogger().info(e.toString());
-            return false;
-        } catch (NoSuchFieldException e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
             Bukkit.getLogger().info(e.toString());
             return false;
         }
@@ -252,9 +242,7 @@ public class BiomeList {
     }
     public Integer[] getBiomeIDs() {
         List<Integer> biomeIdList = new ArrayList<>();
-        for (int i = 0; i < biomes.length; i++) {
-            if (biomes[i] != null) biomeIdList.add(biomes[i].id);
-        }
+        for (BiomeRelationData biome : biomes) if (biome != null) biomeIdList.add(biome.id);
         return biomeIdList.toArray(new Integer[0]);
     }
 }

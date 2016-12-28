@@ -9,13 +9,15 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import static jp.sasrai.biomepainter.util.PermissionUtility.shouldAllowedProcessing;
+
 /**
  * Created by keiso on 2016/12/03.
  */
 public class BPCommandExecutor implements CommandExecutor {
     private final BiomePainter plugin;
 
-    public BPCommandExecutor(BiomePainter plugin) {
+    BPCommandExecutor(BiomePainter plugin) {
         this.plugin = plugin;
     }
 
@@ -34,7 +36,7 @@ public class BPCommandExecutor implements CommandExecutor {
         }
         else if (args[0].equalsIgnoreCase("list") || args[0].equalsIgnoreCase("biomes")) {
             int page = 1;
-            try { page = Integer.parseInt(args[1]); } catch (Exception e) {}
+            try { page = Integer.parseInt(args[1]); } catch (Exception ignored) {}
             return onCommandShowBiomes(sender, page);
         }
 
@@ -59,7 +61,7 @@ public class BPCommandExecutor implements CommandExecutor {
     }
 
     private boolean onNoArgs(Player player) {
-        if (player == null || !(player instanceof Player)) { return false; }
+        if (player == null) { return false; }
 
         plugin.getTool().showToolInfo(player);
 
@@ -67,10 +69,10 @@ public class BPCommandExecutor implements CommandExecutor {
     }
 
     private boolean onCommandSet(Player player, String biomeName) {
-        if (player == null || !(player instanceof Player)) { return false; }
+        if (player == null) { return false; }
 
         // パーミッション確認
-        if (!PermissionUtility.shouldAllowedProcessing(player, "biomepainter.tool.pickup")) { return true; }
+        if (!shouldAllowedProcessing(player, "biomepainter.tool.pickup")) { return true; }
 
         try {
             int biomeId = Integer.parseInt(biomeName);
@@ -94,10 +96,10 @@ public class BPCommandExecutor implements CommandExecutor {
     }
 
     private boolean onCommandGiveTool(Player player) {
-        if (player == null || !(player instanceof Player)) { return false; }
+        if (player == null) { return false; }
 
         // パーミッション確認
-        if (!PermissionUtility.shouldAllowedProcessing(player, "biomepainter.give")) { return true; }
+        if (!shouldAllowedProcessing(player, "biomepainter.give")) { return true; }
 
         if (player.getGameMode() == GameMode.CREATIVE) {
             plugin.getTool().giveToolItem(player);
@@ -109,7 +111,7 @@ public class BPCommandExecutor implements CommandExecutor {
     private  boolean onCommandShowBiomes(CommandSender sender, int page) {
 
         // パーミッション確認
-        if (sender instanceof Player && !PermissionUtility.shouldAllowedProcessing((Player)sender, "biomepainter.give")) { return true; }
+        if (sender instanceof Player && !shouldAllowedProcessing((Player)sender, "biomepainter.give")) { return true; }
 
         Integer[] ids = plugin.getBiomeList().getBiomeIDs();
         int pageLines = (sender instanceof Player) ? 9 : 20;

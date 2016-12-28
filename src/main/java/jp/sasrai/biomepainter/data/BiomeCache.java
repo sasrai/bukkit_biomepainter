@@ -54,7 +54,7 @@ class BiomeCacheData {
 
 public class BiomeCache {
     // 定数
-    final String cacheFilename = "usercache.yml";
+    private final String cacheFilename = "usercache.yml";
 
     private static Map<UUID, BiomeCacheData> biomeCache = new HashMap<>();
 

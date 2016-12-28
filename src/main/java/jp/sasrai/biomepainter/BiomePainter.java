@@ -14,15 +14,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BiomePainter extends JavaPlugin {
-    PaintTool tool;
-    BiomeList biomelist;
+    private PaintTool tool;
+    private BiomeList biomelist;
 
-    public PaintTool getTool() {
-        return tool;
-    }
+    public PaintTool getTool() { return tool; }
     public BiomeList getBiomeList() { return biomelist; }
 
-    boolean pluginInitialize() {
+    private boolean pluginInitialize() {
         // コンフィグ読み込み設定
         this.getConfig().options().copyDefaults(true);
 

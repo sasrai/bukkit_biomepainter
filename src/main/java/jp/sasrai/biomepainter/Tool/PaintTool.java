@@ -71,10 +71,9 @@ public class PaintTool {
             org.bukkit.util.Vector v2 = new org.bukkit.util.Vector(-0.7f * v.getX(), -0.7f * v.getY(), -0.7f * v.getZ());
             loc.add(v2);
         }
-        if (!ParticleAPI.createEffect(particle,
+        ParticleAPI.createEffect(particle,
                 (float)loc.getX(), (float)loc.getY(), (float)loc.getZ(),
-                0.15f, 0.6f, 0.15f, 0.3f, 10)) {
-        }
+                0.15f, 0.6f, 0.15f, 0.3f, 10);
         target.getWorld().playSound(loc, Sound.CLICK, 10f, 10f);
     }
 
@@ -219,6 +218,7 @@ public class PaintTool {
 
         return true;
     }
+
     private boolean canShowBiomeInfo(Player player, Action action) {
         return (action == Action.RIGHT_CLICK_BLOCK || (action == Action.RIGHT_CLICK_AIR && isTargetExists(player)))
                 && player.isSneaking()
@@ -239,6 +239,7 @@ public class PaintTool {
 
         return true;
     }
+
     public boolean canShowToolInfo(Player player, Action action) {
         return (action == Action.RIGHT_CLICK_AIR && !isTargetExists(player))
                 && !player.isSneaking()
@@ -247,6 +248,7 @@ public class PaintTool {
     public void showToolInfo(Player player) {
         player.sendMessage("[BiomePainter] The biome set in the tool is " + ChatColor.YELLOW + plugin.getBiomeList().getBiomeMCName(cache.getBiome(player)));
     }
+
     public boolean canScrollBiome(Player player) {
         return player.isSneaking()
                 && isUsingPlugin(player)

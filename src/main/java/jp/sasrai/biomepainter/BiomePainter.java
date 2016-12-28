@@ -6,8 +6,12 @@ package jp.sasrai.biomepainter;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import jp.sasrai.biomepainter.Tool.PaintTool;
 import jp.sasrai.biomepainter.data.BiomeList;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BiomePainter extends JavaPlugin {
     PaintTool tool;
@@ -41,6 +45,16 @@ public class BiomePainter extends JavaPlugin {
         }
 
         return (WorldGuardPlugin) plugin;
+    }
+
+    public String getMCVersion() {
+        String serverVersion = Bukkit.getVersion();
+        String regex = "MC: *([0-9\\.]+)";
+        Pattern pattern = Pattern.compile(regex);
+
+        Matcher matcher = pattern.matcher(serverVersion);
+        if (matcher.find()) return matcher.group(1);
+        else return null;
     }
 
     @Override

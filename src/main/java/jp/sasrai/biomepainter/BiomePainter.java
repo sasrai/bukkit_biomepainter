@@ -3,19 +3,27 @@ package jp.sasrai.biomepainter;
  * Created by sasrai on 2016/12/2.
  */
 
+import com.google.common.base.Charsets;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import jp.sasrai.biomepainter.Tool.PaintTool;
 import jp.sasrai.biomepainter.data.BiomeList;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.*;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BiomePainter extends JavaPlugin {
     private PaintTool tool;
     private BiomeList biomelist;
+    private FileConfiguration newConfig;
+    private File configFile;
 
     public PaintTool getTool() { return tool; }
     public BiomeList getBiomeList() { return biomelist; }
@@ -60,6 +68,43 @@ public class BiomePainter extends JavaPlugin {
         Matcher matcher = pattern.matcher(serverVersion);
         if (matcher.find()) return matcher.group(1);
         else return null;
+    }
+
+    @Override
+    public FileConfiguration getConfig() {
+        if(this.newConfig == null) {
+            this.reloadConfig();
+        }
+
+        return this.newConfig;
+    }
+
+    @Override
+    public void reloadConfig() {
+        configFile = new File(getDataFolder(), "config.yml");
+        try {
+            newConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(new FileInputStream(configFile), Charsets.UTF_8));
+        } catch (FileNotFoundException e) {
+            newConfig = new YamlConfiguration();
+        }
+        InputStream defConfigStream = this.getResource("config.yml");
+        if (defConfigStream != null) {
+            YamlConfiguration defConfig;
+            defConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream, Charsets.UTF_8));
+
+            newConfig.setDefaults(defConfig);
+        } else {
+            getLogger().warning(ChatColor.RED + "Don't load default configuration.");
+        }
+    }
+
+    @Override
+    public void saveConfig() {
+        try {
+            getConfig().save(configFile);
+        } catch (IOException var2) {
+            getLogger().log(Level.SEVERE, "Could not save config to " + configFile, var2);
+        }
     }
 
     @Override

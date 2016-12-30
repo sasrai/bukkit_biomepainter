@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import static jp.sasrai.biomepainter.util.PermissionUtility.shouldAllowedProcessing;
 
 /**
- * Created by keiso on 2016/12/03.
+ * Created by sasrai on 2016/12/03.
  */
 public class BPCommandExecutor implements CommandExecutor {
     private final BiomePainter plugin;
@@ -108,7 +108,7 @@ public class BPCommandExecutor implements CommandExecutor {
         return true;
     }
 
-    private  boolean onCommandShowBiomes(CommandSender sender, int page) {
+    private boolean onCommandShowBiomes(CommandSender sender, int page) {
 
         // パーミッション確認
         if (sender instanceof Player && !shouldAllowedProcessing((Player)sender, "biomepainter.give")) { return true; }

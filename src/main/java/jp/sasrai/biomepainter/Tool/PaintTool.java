@@ -47,6 +47,8 @@ public class PaintTool {
         setToolItem(Material.matchMaterial(toolName));
 
         int range = plugin.getConfig().getInt("tool.range", 5);
+        if (range < 5) range = 5;
+        if (range > 1000) range = 1000;
         setControlRange(range);
     }
     private void setToolItem(Material item) {

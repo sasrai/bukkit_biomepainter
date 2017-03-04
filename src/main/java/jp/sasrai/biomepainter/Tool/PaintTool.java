@@ -28,6 +28,8 @@ public class PaintTool {
     private static Material toolItem;
     private static int controlRange;
 
+    private static Sound clickSound;
+
     public PaintTool(BiomePainter plugin) {
         this.plugin = plugin;
         this.cache = new BiomeCache();
@@ -50,6 +52,16 @@ public class PaintTool {
         if (range < 5) range = 5;
         if (range > 1000) range = 1000;
         setControlRange(range);
+
+        String clickNames[] = { "CLICK", "UI_BUTTON_CLICK" };
+
+        for (String name: clickNames) {
+            try {
+                setClickSound(Sound.valueOf(name));
+            } catch (IllegalArgumentException e) {
+                continue;
+            }
+        }
     }
     private void setToolItem(Material item) {
         toolItem = item;
@@ -59,6 +71,9 @@ public class PaintTool {
     }
     private void setControlRange(int range) { controlRange = range; }
     private int getControlRange() { return controlRange; }
+
+    private void setClickSound(Sound sound) { clickSound = sound; }
+    private Sound getClickSound() { return clickSound; }
 
     private boolean isUsingPlugin(Player player) {
         return player.getGameMode() == GameMode.CREATIVE
@@ -76,7 +91,8 @@ public class PaintTool {
         ParticleAPI.createEffect(particle,
                 (float)loc.getX(), (float)loc.getY(), (float)loc.getZ(),
                 0.15f, 0.6f, 0.15f, 0.3f, 10);
-        target.getWorld().playSound(loc, Sound.CLICK, 10f, 10f);
+        if (getClickSound() != null)
+            target.getWorld().playSound(loc, getClickSound(), 10f, 10f);
     }
 
     private boolean isTargetExists(Player player) {
@@ -98,6 +114,8 @@ public class PaintTool {
 
             if (biomeId >= plugin.getBiomeList().biomesCount()) biomeId = 0;
             if (biomeId < 0) biomeId = plugin.getBiomeList().biomesCount() - 1;
+
+            if (biomeId == currentBiomeId) break; // 見つからないままテーブルが1周したら終了
 
             if (plugin.getBiomeList().biomeExists(biomeId)
                     && !plugin.getBiomeList().getBiome(biomeId).name().equals(currentBiome.name())) break;

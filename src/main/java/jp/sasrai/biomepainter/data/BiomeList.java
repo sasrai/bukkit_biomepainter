@@ -1,18 +1,13 @@
 package jp.sasrai.biomepainter.data;
 
 import jp.sasrai.biomepainter.BiomePainter;
-import org.bukkit.Bukkit;
-import org.bukkit.Server;
+import jp.sasrai.biomepainter.util.wrapper.*;
 import org.bukkit.block.Biome;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,113 +20,52 @@ public class BiomeList {
 
     private final BiomePainter plugin;
 
-    private final String NMSPackage = "net.minecraft.server.";
-    private final String OBCPackage = "org.bukkit.craftbukkit.";
-
     private BiomeRelationData[] biomes = new BiomeRelationData[256];
-    private final String nmsPackage;
-    private final String obcPackage;
 
-    private Class<?> biomebase;
-    private Class<?> craftblock;
+    private BiomeBaseInterface biomebase;
+    private CraftBlockInterface craftblock;
 
     public BiomeList(BiomePainter plugin) throws NoSuchFileException {
         this.plugin = plugin;
-        String mcversion = getVersionString();
+        String mcversion = WrapperBase.getVersionString();
         if (null == mcversion || plugin.getConfig().getBoolean("biomes.useCustomFile", false)) {
-            nmsPackage = null;
-            obcPackage = null;
             generateBiomeListFromYaml();
         } else {
-            nmsPackage = NMSPackage + mcversion + ".";
-            obcPackage = OBCPackage + mcversion + ".";
-
-            biomebase = getNMSBiomeBase();
-            craftblock = getOBCCraftBlock();
+            biomebase = BiomeBaseUtility.getBiomeBase();
+            craftblock = new CraftBlockWrapper();
 
             if (biomebase == null || craftblock == null) generateBiomeListFromYaml();
             else generateBiomeList();
         }
     }
 
-    private String getVersionString() {
-        try {
-            Server server = Bukkit.getServer();
-            Method getHandler = server.getClass().getMethod("getHandle");
-            String nmsPackage = getHandler.invoke(server).getClass().getPackage().getName();
-
-            return nmsPackage.substring(nmsPackage.lastIndexOf(".") + 1);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private Class<?> getNMSBiomeBase() {
-        try {
-            String biomebasePackage = nmsPackage + "BiomeBase";
-            return Class.forName(biomebasePackage);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-    private Class<?> getOBCCraftBlock() {
-        try {
-            String craftblockPackage = obcPackage + "block.CraftBlock";
-            return Class.forName(craftblockPackage);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private String getBiomeBaseName(Object biomebase, Field field) throws IllegalAccessException {
-        if (null == biomebase || null == field) return "";
-        return (String) field.get(biomebase);
-    }
-    private boolean isBBNameField(Field field) {
-        return (field.getType() == String.class);
-    }
-    private Field getBiomeBaseNameField() throws NoSuchFieldException {
-        for (Field field: biomebase.getDeclaredFields()) {
-            if (isBBNameField(field)) {
-                return field;
-            }
-        }
-        throw new NoSuchFieldException();
-    }
-    private Field getBiomeBaseIdField() throws NoSuchFieldException {
-        return biomebase.getField("id");
-    }
     private boolean generateBiomeList() {
         if (null == biomebase || null == craftblock) return false;
 
         plugin.getLogger().info("Load biomes from " + biomebase.getCanonicalName());
 
-        try {
-            // TODO: MC1.9以降はBiomeBase.REGISTRY_IDで取得する
-            Method getBiomes = biomebase.getMethod("getBiomes");
-            Method biomeBaseToBiome = craftblock.getMethod("biomeBaseToBiome", biomebase);
-            Object[] biomes = (Object[]) getBiomes.invoke(null);
-            Field bbNameField = getBiomeBaseNameField();
+        BiomeBaseInterface[] biomes = biomebase.getBiomes();
 
-            for (int i = 0; i < biomes.length; i++) {
-                Object biomebase = biomes[i];
-                if (null != biomebase) {
-                    BiomeRelationData biomeData = new BiomeRelationData();
+        for (int i = 0; i < biomes.length; i++) {
+            BiomeBaseInterface biomebase = biomes[i];
+            if (null != biomebase) {
+                BiomeRelationData biomeData = new BiomeRelationData();
 
-                    biomeData.id = i;
-                    biomeData.mcName = getBiomeBaseName(biomebase, bbNameField);
-                    biomeData.biome = (Biome) biomeBaseToBiome.invoke(null, biomebase);
-                    biomeData.biomebase = biomebase;
+                plugin.getLogger().info("biomes[" + i + "]");
+                biomeData.id = biomebase.getId();
+                biomeData.mcName = biomebase.getName();//biomebase, bbNameField);
+                biomeData.biome = craftblock.BiomeBaseToBiome(biomebase);
+                biomeData.biomebase = biomebase;
 
-                    this.biomes[i] = biomeData;
-                }
+                this.biomes[i] = biomeData;
+
+                plugin.getLogger().info(biomeData.toString());
             }
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
-            Bukkit.getLogger().info(e.toString());
-            return false;
         }
+
         return true;
     }
+
     private boolean generateBiomeListFromYaml() throws NoSuchFileException {
         File biomesFile = new File(plugin.getDataFolder(), plugin.getConfig().getString("biomes.biomesFile", DEFAULT_BIOMES_FILE));
         if (!biomesFile.exists()) {

@@ -43,10 +43,10 @@ public class WrapperBase {
         return numericIdStyle;
     }
 
-    protected String getNMSPackage() {
+    protected static String getNMSPackage() {
         return nmsPackage;
     }
-    protected String getOBCPackage() {
+    protected static String getOBCPackage() {
         return obcPackage;
     }
 }

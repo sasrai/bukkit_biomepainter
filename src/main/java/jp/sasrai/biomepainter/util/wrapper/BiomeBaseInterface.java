@@ -14,4 +14,6 @@ public interface BiomeBaseInterface { // BiomeBaseWrapperInterface
     public Class<?> getBiomeBaseClass();
     public Object getBiomeBaseObject();
     public void setBiomeBaseObject(Object biomeBaseObject);
+
+    public boolean isAvailable();
 }

@@ -1,5 +1,6 @@
 package jp.sasrai.biomepainter.data;
 
+import jp.sasrai.biomepainter.util.wrapper.BiomeBaseInterface;
 import org.bukkit.block.Biome;
 
 /**
@@ -8,7 +9,7 @@ import org.bukkit.block.Biome;
 public class BiomeRelationData {
     String mcName = "Ocian";
     Biome biome = Biome.OCEAN;
-    Object biomebase = "";
+    BiomeBaseInterface biomebase = null;
     int id = 0;
 
     @Override

@@ -28,6 +28,8 @@ public class PaintTool {
     private static Material toolItem;
     private static int controlRange;
 
+    private static Sound clickSound;
+
     public PaintTool(BiomePainter plugin) {
         this.plugin = plugin;
         this.cache = new BiomeCache();
@@ -50,6 +52,16 @@ public class PaintTool {
         if (range < 5) range = 5;
         if (range > 1000) range = 1000;
         setControlRange(range);
+
+        String clickNames[] = { "CLICK", "UI_BUTTON_CLICK" };
+
+        for (String name: clickNames) {
+            try {
+                setClickSound(Sound.valueOf(name));
+            } catch (IllegalArgumentException e) {
+                continue;
+            }
+        }
     }
     private void setToolItem(Material item) {
         toolItem = item;
@@ -60,9 +72,12 @@ public class PaintTool {
     private void setControlRange(int range) { controlRange = range; }
     private int getControlRange() { return controlRange; }
 
-    private boolean isUsingPlugin(Player player) {
+    private void setClickSound(Sound sound) { clickSound = sound; }
+    private Sound getClickSound() { return clickSound; }
+
+    private boolean isUsingPlugin(Player player, Material material) {
         return player.getGameMode() == GameMode.CREATIVE
-                && player.getItemInHand().getType() == getToolItem();
+                && material == getToolItem();
     }
 
     private void showTargetEffect(Player player, Block target, ParticleAPI.EnumParticle particle) {
@@ -76,7 +91,8 @@ public class PaintTool {
         ParticleAPI.createEffect(particle,
                 (float)loc.getX(), (float)loc.getY(), (float)loc.getZ(),
                 0.15f, 0.6f, 0.15f, 0.3f, 10);
-        target.getWorld().playSound(loc, Sound.CLICK, 10f, 10f);
+        if (getClickSound() != null)
+            target.getWorld().playSound(loc, getClickSound(), 10f, 10f);
     }
 
     private boolean isTargetExists(Player player) {
@@ -98,6 +114,8 @@ public class PaintTool {
 
             if (biomeId >= plugin.getBiomeList().biomesCount()) biomeId = 0;
             if (biomeId < 0) biomeId = plugin.getBiomeList().biomesCount() - 1;
+
+            if (biomeId == currentBiomeId) break; // 見つからないままテーブルが1周したら終了
 
             if (plugin.getBiomeList().biomeExists(biomeId)
                     && !plugin.getBiomeList().getBiome(biomeId).name().equals(currentBiome.name())) break;
@@ -175,14 +193,14 @@ public class PaintTool {
         return block;
     }
 
-    private boolean canPickupBlock(Player player, Action action) {
+    private boolean canPickupBlock(Player player, Material material, Action action) {
         return (action == Action.LEFT_CLICK_BLOCK || (action == Action.LEFT_CLICK_AIR && isTargetExists(player)))
-                && isUsingPlugin(player)
+                && isUsingPlugin(player, material)
                 && PermissionUtility.shouldAllowedProcessing(player, "biomepainter.tool.pickup");
     }
-    public boolean pickupBlockInfo(Player player, Action action, Block target) {
+    public boolean pickupBlockInfo(Player player, Material material, Action action, Block target) {
         if (target == null) target = getTargetBlockForumVer(player);
-        if (!canPickupBlock(player, action)) return false;
+        if (!canPickupBlock(player, material, action)) return false;
 
         setBiome(player, target.getBiome());
 
@@ -191,15 +209,15 @@ public class PaintTool {
         return true;
     }
 
-    private boolean canBiomePainting(Player player, Action action) {
+    private boolean canBiomePainting(Player player, Material material, Action action) {
         return (action == Action.RIGHT_CLICK_BLOCK || (action == Action.RIGHT_CLICK_AIR && isTargetExists(player)))
                 && !player.isSneaking()
-                && isUsingPlugin(player)
+                && isUsingPlugin(player, material)
                 && PermissionUtility.shouldAllowedProcessing(player, "biomepainter.tool.paint");
     }
-    public boolean replaceBiome(Player player, Action action, Block target) {
+    public boolean replaceBiome(Player player, Material material, Action action, Block target) {
         if (target == null) target = getTargetBlockForumVer(player);
-        if (!canBiomePainting(player, action) || !shouldEditingBiome(player, target)) return false;
+        if (!canBiomePainting(player, material, action) || !shouldEditingBiome(player, target)) return false;
 
         Biome newBiome = cache.getBiome(player);
         Location loc = target.getLocation();
@@ -221,15 +239,15 @@ public class PaintTool {
         return true;
     }
 
-    private boolean canShowBiomeInfo(Player player, Action action) {
+    private boolean canShowBiomeInfo(Player player, Material material, Action action) {
         return (action == Action.RIGHT_CLICK_BLOCK || (action == Action.RIGHT_CLICK_AIR && isTargetExists(player)))
                 && player.isSneaking()
-                && isUsingPlugin(player)
+                && isUsingPlugin(player, material)
                 && PermissionUtility.shouldAllowedProcessing(player, "biomepainter.tool.check");
     }
-    public boolean showBiomeInfo(Player player, Action action, Block target) {
+    public boolean showBiomeInfo(Player player, Material material, Action action, Block target) {
         if (target == null) target = getTargetBlockForumVer(player);
-        if (!canShowBiomeInfo(player, action)) return false;
+        if (!canShowBiomeInfo(player, material, action)) return false;
 
         Formatter fm = new Formatter();
         Location loc = target.getLocation();
@@ -242,10 +260,10 @@ public class PaintTool {
         return true;
     }
 
-    public boolean canShowToolInfo(Player player, Action action) {
+    public boolean canShowToolInfo(Player player, Material material, Action action) {
         return (action == Action.RIGHT_CLICK_AIR && !isTargetExists(player))
                 && !player.isSneaking()
-                && isUsingPlugin(player);
+                && isUsingPlugin(player, material);
     }
     public void showToolInfo(Player player) {
         player.sendMessage("[BiomePainter] The biome set in the tool is " + ChatColor.YELLOW + plugin.getBiomeList().getBiomeMCName(cache.getBiome(player)));
@@ -253,7 +271,7 @@ public class PaintTool {
 
     public boolean canScrollBiome(Player player) {
         return player.isSneaking()
-                && isUsingPlugin(player)
+                && isUsingPlugin(player, player.getItemInHand().getType())
                 && PermissionUtility.shouldAllowedProcessing(player, "biomepainter.tool.paint");
     }
     public boolean scrollBiome(Player player, int newSlot, int prevSlot) {

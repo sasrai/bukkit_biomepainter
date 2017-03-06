@@ -27,7 +27,10 @@ public class BPCommandExecutor implements CommandExecutor {
         if (!cmd.getName().equalsIgnoreCase("bpaint")) { return false; }
 
         // コマンド処理
-        if (args.length == 0) { return onNoArgs((Player) sender); }
+        if (args.length == 0) {
+            if (sender instanceof Player) return onNoArgs((Player) sender);
+            else return false;
+        }
         else if (args[0].equalsIgnoreCase("set") && isSendPlayer(sender) && args.length >= 2) {
             return onCommandSet((Player) sender, buildLongArgs(args));
         }
@@ -121,6 +124,8 @@ public class BPCommandExecutor implements CommandExecutor {
         else if (page > ids.length / pageLines) page = (int)Math.ceil((double)ids.length / (double)pageLines);
 
         int offset = (page -1) * pageLines;
+        if (offset < 0) offset = 0;
+
         StringBuilder sb = new StringBuilder();
 
         sb.append(ChatColor.DARK_PURPLE)

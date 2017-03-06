@@ -60,7 +60,7 @@ class BPPlayerEventListener implements Listener {
     public void onBiomePickup(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
-        if (tool.pickupBlockInfo(player, event.getAction(), event.getClickedBlock())) {
+        if (tool.pickupBlockInfo(player, event.getMaterial(), event.getAction(), event.getClickedBlock())) {
             event.setCancelled(true);
         }
     }
@@ -69,14 +69,14 @@ class BPPlayerEventListener implements Listener {
     public void onBiomePaint(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
-        tool.replaceBiome(player, event.getAction(), event.getClickedBlock());
+        tool.replaceBiome(player, event.getMaterial(), event.getAction(), event.getClickedBlock());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onShowBiomeInfo(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
-        if (tool.showBiomeInfo(player, event.getAction(), event.getClickedBlock())) {
+        if (tool.showBiomeInfo(player, event.getMaterial(), event.getAction(), event.getClickedBlock())) {
             event.setCancelled(true);
         }
     }
@@ -85,7 +85,7 @@ class BPPlayerEventListener implements Listener {
     public void onShowToolInfo(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
-        if (tool.canShowToolInfo(player, event.getAction())) {
+        if (tool.canShowToolInfo(player, event.getMaterial(), event.getAction())) {
             tool.showToolInfo(player);
         }
     }

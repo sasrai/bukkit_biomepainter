@@ -21,10 +21,17 @@ public class WrapperBase {
     static {
         mcVersion = getVersionString();
 
-        numericIdStyle = (Integer.parseInt(mcVersion.split("_")[1]) < 9);
+        if (mcVersion == null) {
+            numericIdStyle = true;
 
-        nmsPackage = NMSPackage + mcVersion + ".";
-        obcPackage = OBCPackage + mcVersion + ".";
+            nmsPackage = null;
+            obcPackage = null;
+        } else {
+            numericIdStyle = (Integer.parseInt(mcVersion.split("_")[1]) < 9);
+
+            nmsPackage = NMSPackage + mcVersion + ".";
+            obcPackage = OBCPackage + mcVersion + ".";
+        }
     }
 
     public static String getVersionString() {

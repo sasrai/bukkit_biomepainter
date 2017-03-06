@@ -40,4 +40,13 @@ public class BiomeBase_1_7 extends BiomeBaseCommonWrapper {
     public int getId() {
         return getIDFieldData();
     }
+
+    @Override
+    public boolean isAvailable() {
+        try {
+            return super.isAvailable() && getIDField() != null;
+        } catch (NoSuchFieldException e) {
+            return false;
+        }
+    }
 }

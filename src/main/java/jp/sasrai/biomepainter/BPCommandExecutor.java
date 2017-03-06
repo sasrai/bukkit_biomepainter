@@ -121,6 +121,8 @@ public class BPCommandExecutor implements CommandExecutor {
         else if (page > ids.length / pageLines) page = (int)Math.ceil((double)ids.length / (double)pageLines);
 
         int offset = (page -1) * pageLines;
+        if (offset < 0) offset = 0;
+
         StringBuilder sb = new StringBuilder();
 
         sb.append(ChatColor.DARK_PURPLE)

@@ -10,7 +10,7 @@ abstract public class BiomeBaseUtility extends WrapperBase {
 
     public static BiomeBaseInterface getBiomeBase(Object bbObj) {
         if (isNumericIdStyle())
-            return new BiomeBase_1_7();
+            return new BiomeBase_1_8();
         else
             return new BiomeBase_1_9();
     }

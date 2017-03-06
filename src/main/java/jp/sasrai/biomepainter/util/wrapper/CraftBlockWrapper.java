@@ -9,14 +9,20 @@ import java.lang.reflect.Method;
  * Created by sasrai on 2017/03/04.
  */
 public class CraftBlockWrapper extends WrapperBase implements CraftBlockInterface {
-
-    private final Class<?> craftBlock;
+    private static Class<?> craftBlock;
+    static {
+        try {
+            String craftblockPackage = getOBCPackage() + "block.CraftBlock";
+            craftBlock = Class.forName(craftblockPackage);
+        } catch (Exception e) {
+            craftBlock = null;
+        }
+    }
 
     private Method biomeBaseToBiomeMethod;
     private Method biomeToBiomeBaseMethod;
 
     public CraftBlockWrapper() {
-        craftBlock = getOBCCraftBlock();
     }
 
     private Method getBBtoBiomeMethod(Class<?> biomebase) throws NoSuchMethodException {
@@ -25,15 +31,6 @@ public class CraftBlockWrapper extends WrapperBase implements CraftBlockInterfac
 
     private Method getBiomeToBBMethod() throws NoSuchMethodException {
         return craftBlock.getMethod("biomeToBiomeBase", Biome.class);
-    }
-
-    private Class<?> getOBCCraftBlock() {
-        try {
-            String craftblockPackage = getOBCPackage() + "block.CraftBlock";
-            return Class.forName(craftblockPackage);
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     @Override
@@ -55,9 +52,12 @@ public class CraftBlockWrapper extends WrapperBase implements CraftBlockInterfac
             Object bbObj = biomeToBiomeBaseMethod.invoke(null, biome);
             return bbObj;
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            for (Method m: craftBlock.getMethods()) System.out.println(m.toString());
-            e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return (craftBlock != null);
     }
 }

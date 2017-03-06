@@ -25,25 +25,6 @@ public class BiomeBaseCommonWrapper extends WrapperBase implements BiomeBaseInte
     public BiomeBaseCommonWrapper() {
     }
 
-    private boolean isBBNameField(Field field) {
-        return (field.getType() == String.class);
-    }
-    private Field getNameField() throws NoSuchFieldException {
-        for (Field field: biomeBase.getDeclaredFields()) {
-            if (isBBNameField(field)) {
-                return field;
-            }
-        }
-        throw new NoSuchFieldException();
-    }
-    private String getNameFieldData() {
-        try {
-            return (String)getNameField().get(instance);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            return "OCEAN";
-        }
-    }
-
     @Override
     public BiomeBaseInterface[] getBiomes() {
         return new BiomeBaseInterface[0];
@@ -56,7 +37,7 @@ public class BiomeBaseCommonWrapper extends WrapperBase implements BiomeBaseInte
 
     @Override
     public String getName() {
-        return getNameFieldData();
+        return "Unknown";
     }
 
     @Override

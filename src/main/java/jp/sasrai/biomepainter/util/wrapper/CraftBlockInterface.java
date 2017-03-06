@@ -9,4 +9,6 @@ public interface CraftBlockInterface { // CraftBlockWrapperInterface
     public Biome BiomeBaseToBiome(BiomeBaseInterface biomebase);
 
     public Object BiomeToBiomeBase(Biome biome);
+
+    public boolean isAvailable();
 }

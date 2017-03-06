@@ -34,7 +34,7 @@ public class BiomeList {
             biomebase = BiomeBaseUtility.getBiomeBase();
             craftblock = new CraftBlockWrapper();
 
-            if (biomebase == null || craftblock == null) generateBiomeListFromYaml();
+            if (!biomebase.isAvailable() || !craftblock.isAvailable()) generateBiomeListFromYaml();
             else generateBiomeList();
         }
     }
@@ -51,15 +51,13 @@ public class BiomeList {
             if (null != biomebase) {
                 BiomeRelationData biomeData = new BiomeRelationData();
 
-                plugin.getLogger().info("biomes[" + i + "]");
                 biomeData.id = biomebase.getId();
+                if (biomeData.id < 0) continue;
                 biomeData.mcName = biomebase.getName();//biomebase, bbNameField);
                 biomeData.biome = craftblock.BiomeBaseToBiome(biomebase);
                 biomeData.biomebase = biomebase;
 
                 this.biomes[i] = biomeData;
-
-                plugin.getLogger().info(biomeData.toString());
             }
         }
 

@@ -21,7 +21,7 @@ public class WrapperBase {
     static {
         mcVersion = getVersionString();
 
-        numericIdStyle = (Integer.parseInt(mcVersion.split("_")[1]) < 8);
+        numericIdStyle = (Integer.parseInt(mcVersion.split("_")[1]) < 9);
 
         nmsPackage = NMSPackage + mcVersion + ".";
         obcPackage = OBCPackage + mcVersion + ".";
